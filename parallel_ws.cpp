@@ -6,6 +6,7 @@
 #include <tuple>
 #include <limits>
 #include <iomanip>
+#include <omp.h>
 using namespace std;
 int thread_cnt = 4;
 const float INF = numeric_limits<float>::max();
@@ -23,10 +24,14 @@ void printMatrix(const vector<vector<float>>& matrix) {
         cout << endl;
     }
 }
-int main() {
+int main(int argc,char** argv) {
     string filename = "data/my_example2.csv";
     ifstream file(filename);
-    
+    if(argc != 2){
+        cout<<"./xxx <num_thread>"<<endl;
+    }
+    thread_cnt = atoi(argv[1]);
+    // cout<<argc<<' '<<thread_cnt;
     if (!file.is_open()) {
         cerr << "无法打开文件" << endl;
         return 1;
@@ -75,6 +80,7 @@ int main() {
     int n = adj_matrix.size();
     
     // Floyd-Warshall算法核心
+    double st = omp_get_wtime();
     #pragma omp parallel num_threads(thread_cnt)
     for (int k = 0; k < n; ++k) {
         #pragma omp for
@@ -89,9 +95,10 @@ int main() {
             }
         }
     }
-
-    cout << "\n所有节点对的最短路径矩阵：" << endl;
-    printMatrix(adj_matrix);
+    double time = omp_get_wtime() - st;
+    cout<<"用时："<<time<<endl;
+    // cout << "\n所有节点对的最短路径矩阵：" << endl;
+    // printMatrix(adj_matrix);
 
     return 0;
 }

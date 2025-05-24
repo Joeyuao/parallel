@@ -6,14 +6,18 @@
 #include <tuple>
 #include <limits>
 #include <iomanip>
+#include <omp.h>
 using namespace std;
 const float MINF = numeric_limits<float>::min();
 const float MAXF = numeric_limits<float>::max();
 int thread_cnt = 4;
-int main() {
+int main(int argc, char** argv) {
     string filename = "data/my_example2.csv";
     ifstream file(filename);
-    
+    if(argc != 2){
+        cout<<"./xxx <num_thread>"<<endl;
+    }
+    thread_cnt = atoi(argv[1]);
     if (!file.is_open()) {
         cerr << "无法打开文件" << endl;
         return 1;
@@ -40,6 +44,7 @@ int main() {
     }
     int size = max_node + 1;
     vector<vector<float>>ans;
+    double st = omp_get_wtime();
     for (int start = 0; start < size; start++){
         vector<float>minDist(size, MAXF);
         minDist[start] = 0;
@@ -59,17 +64,16 @@ int main() {
                 }
             }
         }
-        ans.push_back(minDist);
-        for (int i = 0; i < size; i++){
-            if(minDist[i] != MAXF)
-                std::cout<< setw(5) << minDist[i];
-            else
-                std::cout<< setw(5) <<"INF";
-        }
-        std::cout<<endl;
+        // ans.push_back(minDist);
+        // for (int i = 0; i < size; i++){
+        //     if(minDist[i] != MAXF)
+        //         std::cout<< setw(5) << minDist[i];
+        //     else
+        //         std::cout<< setw(5) <<"INF";
+        // }
+        // std::cout<<endl;
     }
+    double time = omp_get_wtime() - st;
+    cout<<"用时："<<time<<endl;
     
-    
-
-
 }

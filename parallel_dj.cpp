@@ -12,12 +12,12 @@ int thread_cnt = 4;
 const float MINF = numeric_limits<float>::min();
 const float MAXF = numeric_limits<float>::max();
 int main(int argc, char** argv) {
-    string filename = "data/my_example2.csv";
+    string filename = "data/updated_flower.csv";
     ifstream file(filename);
     if(argc != 2){
-        cout<<"./xxx <num_thread>"<<endl;
+        std::cout<<"./xxx <num_thread>"<<endl;
     }
-    thread_cnt = atoi(argv[1]);
+    // thread_cnt = atoi(argv[1]);
     if (!file.is_open()) {
         cerr << "无法打开文件" << endl;
         return 1;
@@ -60,9 +60,11 @@ int main(int argc, char** argv) {
         adj_matrix[t][s] = d;
     }
 
-    vector<vector<float>>ans;
+    vector<vector<float>>ans(size, vector<float>(size, MAXF));
+    std::cout<<"begin"<<endl;
     double st = omp_get_wtime();
     for (int start = 0; start < size; start++){
+        std::cout<<"iters:"<<start<<endl;
         std::vector<float> minDist(size , MAXF);
 
         // 记录顶点是否被访问过
@@ -77,39 +79,36 @@ int main(int argc, char** argv) {
             int cur = -1;
             globle_minVal = MAXF;
             globle_cur = -1;
-            // #pragma omp single
-            // cout<<i<<endl;
+
             // 1、选距离源点最近且未访问过的节点
             #pragma omp for
-            for (int v = 0; v < size; ++v) {
+            for (int v = 0; v < size; v++) {
                 if (!visited[v] && minDist[v] < minVal) {
                     minVal = minDist[v];
                     cur = v;
                 }
             }
-
+            // #pragma omp barrier
             #pragma omp critical
             {
                 globle_cur = globle_minVal < minVal ? globle_cur : cur;
                 globle_minVal = globle_minVal < minVal ? globle_minVal : minVal;
             }
             
-            // 2、标记该节点已被访问
-            
             #pragma omp barrier
+
+            if (globle_cur == -1) {
+                break; // 剩余节点不可达，终止循环
+            }
             #pragma omp single
             {
                 visited[globle_cur] = true;
-                // cout<<globle_cur<<endl;
             }
-            // #pragma omp barrier
-            
-
             // 3、第三步，更新非访问节点到源点的距离（即更新minDist数组）
             #pragma omp for
             for (int v = 0; v < size; v++) {
                 if (!visited[v] && adj_matrix[globle_cur][v] != MAXF && minDist[globle_cur] + adj_matrix[globle_cur][v] < minDist[v]) {
-                    minDist[v] = minDist[globle_cur] + adj_matrix[globle_cur][v];
+                    ans[start][v] = minDist[v] = minDist[globle_cur] + adj_matrix[globle_cur][v];
                 }
             }
 
@@ -118,13 +117,13 @@ int main(int argc, char** argv) {
         // ans.push_back(minDist);
         // for (int i = 0; i < size; i++){
         //     if(minDist[i] != MAXF)
-        //         cout<< setw(5) << minDist[i];
+        //         std::cout<< setw(5) << minDist[i];
         //     else
-        //         cout<< setw(5) <<"INF";
+        //         std::cout<< setw(5) <<"INF";
         // }
-        // cout<<endl;
+        // std::cout<<endl;
     }
     double time = omp_get_wtime() - st;
-    cout<<"用时："<<time<<endl;
+    std::cout<<"用时："<<time<<endl;
     
 }

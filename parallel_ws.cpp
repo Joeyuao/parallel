@@ -25,12 +25,12 @@ void printMatrix(const vector<vector<float>>& matrix) {
     }
 }
 int main(int argc,char** argv) {
-    string filename = "data/my_example2.csv";
+    string filename = "data/updated_flower.csv";
     ifstream file(filename);
     if(argc != 2){
         cout<<"./xxx <num_thread>"<<endl;
     }
-    thread_cnt = atoi(argv[1]);
+    // thread_cnt = atoi(argv[1]);
     // cout<<argc<<' '<<thread_cnt;
     if (!file.is_open()) {
         cerr << "无法打开文件" << endl;
@@ -99,6 +99,13 @@ int main(int argc,char** argv) {
     cout<<"用时："<<time<<endl;
     // cout << "\n所有节点对的最短路径矩阵：" << endl;
     // printMatrix(adj_matrix);
-
+    // #pragma omp single 
+    // for (int i = 0; i<size; i++){
+    //     for (int j = 0; j < size; j++){
+    //         if(adj_matrix[i][j] == INF){
+    //             cout<<"INF"<<endl;
+    //         }
+    //     }
+    // }
     return 0;
 }

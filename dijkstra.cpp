@@ -10,7 +10,7 @@ using namespace std;
 const float MINF = numeric_limits<float>::min();
 const float MAXF = numeric_limits<float>::max();
 int main(int argc, char** argv) {
-    string filename = "data/my_example2.csv";
+    string filename = "data/updated_flower.csv";
     ifstream file(filename);
     
     if (!file.is_open()) {
@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
         for (int i = 0; i < size; i++) { // 遍历所有节点
 
             float minVal = MAXF;
-            int cur = 1;
+            int cur = -1;
 
             // 1、选距离源点最近且未访问过的节点
             for (int v = 0; v < size; ++v) {
@@ -76,7 +76,9 @@ int main(int argc, char** argv) {
                     cur = v;
                 }
             }
-
+            if (cur == -1) {
+                break; // 剩余节点不可达，终止循环
+            }
             visited[cur] = true;  // 2、标记该节点已被访问
 
             // 3、第三步，更新非访问节点到源点的距离（即更新minDist数组）
@@ -88,14 +90,15 @@ int main(int argc, char** argv) {
 
         }
         int end = size - 1;
-        ans.push_back(minDist);
-        for (int i = 0; i < size; i++){
-            if(minDist[i] != MAXF)
-                cout<< setw(5) << minDist[i];
-            else
-                cout<< setw(5) <<"INF";
-        }
-        cout<<endl;
+        cout<<start<<endl;
+        // ans.push_back(minDist);
+        // for (int i = 0; i < size; i++){
+        //     if(minDist[i] != MAXF)
+        //         cout<< setw(5) << minDist[i];
+        //     else
+        //         cout<< setw(5) <<"INF";
+        // }
+        // cout<<endl;
     }
 
     

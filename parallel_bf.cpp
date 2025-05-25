@@ -12,12 +12,12 @@ const float MINF = numeric_limits<float>::min();
 const float MAXF = numeric_limits<float>::max();
 int thread_cnt = 4;
 int main(int argc, char** argv) {
-    string filename = "data/my_example2.csv";
+    string filename = "data/updated_flower.csv";
     ifstream file(filename);
     if(argc != 2){
         cout<<"./xxx <num_thread>"<<endl;
     }
-    thread_cnt = atoi(argv[1]);
+    // thread_cnt = atoi(argv[1]);
     if (!file.is_open()) {
         cerr << "无法打开文件" << endl;
         return 1;
@@ -43,9 +43,10 @@ int main(int argc, char** argv) {
         }
     }
     int size = max_node + 1;
-    vector<vector<float>>ans;
+    vector<vector<float>>ans(size, vector<float>(size, MAXF));
     double st = omp_get_wtime();
     for (int start = 0; start < size; start++){
+        // cout<<"iters"<<start<<endl;
         vector<float>minDist(size, MAXF);
         minDist[start] = 0;
         #pragma omp parallel num_threads(thread_cnt)
@@ -57,10 +58,10 @@ int main(int argc, char** argv) {
                 int to = get<1>(edges[j]);
                 float dis = get<2>(edges[j]);
                 if(minDist[from] != MAXF && minDist[to] > minDist[from] + dis){
-                    minDist[to] = minDist[from] + dis;
+                    ans[start][to] = minDist[to] = minDist[from] + dis;
                 }
                 else if(minDist[to] != MAXF && minDist[from] > minDist[to] + dis){
-                    minDist[from] = minDist[to] + dis;
+                    ans[start][from] = minDist[from] = minDist[to] + dis;
                 }
             }
         }

@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
         #pragma omp parallel num_threads(thread_cnt)
         for (int i = 0; i < size - 1; i++){
             int inner_n = edges.size();
-            #pragma omp parallel for
+            #pragma omp for
             for (int j = 0; j < inner_n; j++){
                 int from = get<0>(edges[j]);
                 int to = get<1>(edges[j]);

@@ -1,0 +1,1292 @@
+desc: --stacks=yes --massif-out-file=massif.out
+cmd: ./fft_opt
+time_unit: i
+#-----------
+snapshot=0
+#-----------
+time=0
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=1
+#-----------
+time=5482836
+mem_heap_B=284833
+mem_heap_extra_B=23295
+mem_stacks_B=5960
+heap_tree=detailed
+n10: 284833 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 72704 0x4C52454: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25)
+  n1: 72704 0x400F378: call_init.part.0 (dl-init.c:72)
+   n1: 72704 0x400F474: _dl_init (dl-init.c:118)
+    n0: 72704 0x40010C8: ??? (in /lib/x86_64-linux-gnu/ld-2.28.so)
+ n3: 62544 0x4F6DDB8: strdup (strdup.c:42)
+  n1: 49962 0x4A40DD8: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n0: 49962 in 265 places, all below massif's threshold (1.00%)
+  n1: 9491 0x4A40D78: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n0: 9491 in 265 places, all below massif's threshold (1.00%)
+  n0: 3091 in 102 places, all below massif's threshold (1.00%)
+ n2: 45056 0x4A40F94: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 45056 0x49B44E6: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 45056 0x493322D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 45056 0x48F6AA5: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 45056 0x10A314: main (mpi_fft_optimize.cpp:25)
+  n0: 0 in 6 places, all below massif's threshold (1.00%)
+ n1: 36864 0x4A4126D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n0: 36864 in 96 places, all below massif's threshold (1.00%)
+ n0: 22521 in 46 places, all below massif's threshold (1.00%)
+ n1: 19080 0x4A40DF8: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n0: 19080 in 265 places, all below massif's threshold (1.00%)
+ n2: 13888 0x4A4F2F8: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n0: 8432 in 4 places, all below massif's threshold (1.00%)
+  n1: 5456 0x4A7307E: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 5456 0x4A7627A: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 5456 0x4A5232A: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 5456 0x48F6E6B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 5456 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n0: 5456 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 4096 0x4A589A8: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n0: 4096 in 13 places, all below massif's threshold (1.00%)
+ n1: 4096 0x4F3B8B5: register_printf_specifier (reg-printf.c:57)
+  n1: 4096 0x5342590: ??? (in /usr/lib/x86_64-linux-gnu/libquadmath.so.0.0.0)
+   n1: 4096 0x400F378: call_init.part.0 (dl-init.c:72)
+    n1: 4096 0x400F474: _dl_init (dl-init.c:118)
+     n0: 4096 0x40010C8: ??? (in /lib/x86_64-linux-gnu/ld-2.28.so)
+ n2: 3984 0x50C3E61: ??? (in /usr/lib/x86_64-linux-gnu/libgfortran.so.5.0.0)
+  n1: 3720 0x52C2145: ??? (in /usr/lib/x86_64-linux-gnu/libgfortran.so.5.0.0)
+   n0: 3720 in 5 places, all below massif's threshold (1.00%)
+  n0: 264 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=2
+#-----------
+time=13312685
+mem_heap_B=4415363
+mem_heap_extra_B=35221
+mem_stacks_B=1584
+heap_tree=empty
+#-----------
+snapshot=3
+#-----------
+time=18674016
+mem_heap_B=4435355
+mem_heap_extra_B=35165
+mem_stacks_B=1336
+heap_tree=detailed
+n6: 4435355 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 191113 in 160 places, all below massif's threshold (1.00%)
+ n1: 72704 0x4C52454: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25)
+  n1: 72704 0x400F378: call_init.part.0 (dl-init.c:72)
+   n1: 72704 0x400F474: _dl_init (dl-init.c:118)
+    n0: 72704 0x40010C8: ??? (in /lib/x86_64-linux-gnu/ld-2.28.so)
+ n2: 63250 0x4F6DDB8: strdup (strdup.c:42)
+  n1: 49962 0x4A40DD8: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n0: 49962 in 265 places, all below massif's threshold (1.00%)
+  n0: 13288 in 106 places, all below massif's threshold (1.00%)
+ n2: 45056 0x4A40F94: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 45056 0x49B44E6: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 45056 0x493322D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 45056 0x48F6AA5: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 45056 0x10A314: main (mpi_fft_optimize.cpp:25)
+  n0: 0 in 6 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=4
+#-----------
+time=25150228
+mem_heap_B=4534885
+mem_heap_extra_B=35235
+mem_stacks_B=1864
+heap_tree=empty
+#-----------
+snapshot=5
+#-----------
+time=29318866
+mem_heap_B=5950975
+mem_heap_extra_B=35225
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=6
+#-----------
+time=34613427
+mem_heap_B=5950975
+mem_heap_extra_B=35225
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=7
+#-----------
+time=39841445
+mem_heap_B=5950975
+mem_heap_extra_B=35225
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=8
+#-----------
+time=43762419
+mem_heap_B=5950975
+mem_heap_extra_B=35225
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=9
+#-----------
+time=49315776
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=464
+heap_tree=detailed
+n5: 7523939 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 2097152 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=10
+#-----------
+time=53672491
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1384
+heap_tree=detailed
+n5: 7523939 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 2097152 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=11
+#-----------
+time=58994200
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=12
+#-----------
+time=65417799
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=13
+#-----------
+time=71841358
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=14
+#-----------
+time=79870804
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=15
+#-----------
+time=84688477
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 7523939 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 2097152 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=16
+#-----------
+time=92717923
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 7523939 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 2097152 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=17
+#-----------
+time=97657403
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=18
+#-----------
+time=103983916
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1384
+heap_tree=detailed
+n5: 7523939 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 2097152 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=19
+#-----------
+time=109045164
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=20
+#-----------
+time=112841128
+mem_heap_B=7523939
+mem_heap_extra_B=35269
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=21
+#-----------
+time=117608989
+mem_heap_B=8572515
+mem_heap_extra_B=35285
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=22
+#-----------
+time=123199934
+mem_heap_B=8572515
+mem_heap_extra_B=35285
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=23
+#-----------
+time=127367316
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=464
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=24
+#-----------
+time=133693955
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=25
+#-----------
+time=140020571
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=26
+#-----------
+time=145081776
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=27
+#-----------
+time=150143102
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=28
+#-----------
+time=155204303
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=29
+#-----------
+time=163644087
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=30
+#-----------
+time=172083931
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=31
+#-----------
+time=176303853
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=32
+#-----------
+time=184743658
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=33
+#-----------
+time=193183502
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=34
+#-----------
+time=197403424
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=35
+#-----------
+time=201623346
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=36
+#-----------
+time=205843268
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=37
+#-----------
+time=210063190
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=38
+#-----------
+time=214283112
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=39
+#-----------
+time=218503034
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=40
+#-----------
+time=222722956
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=41
+#-----------
+time=226942878
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=42
+#-----------
+time=231162800
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=43
+#-----------
+time=235382722
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=44
+#-----------
+time=239602644
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=45
+#-----------
+time=243822566
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=46
+#-----------
+time=248042488
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=47
+#-----------
+time=252262410
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=48
+#-----------
+time=256482332
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=49
+#-----------
+time=260702254
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=50
+#-----------
+time=264498218
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=51
+#-----------
+time=268294211
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=52
+#-----------
+time=272090178
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=53
+#-----------
+time=275886164
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=54
+#-----------
+time=279682128
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=55
+#-----------
+time=283478124
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=56
+#-----------
+time=287274088
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=57
+#-----------
+time=291070116
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=58
+#-----------
+time=294866080
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=59
+#-----------
+time=298662076
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=60
+#-----------
+time=302458040
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=61
+#-----------
+time=306254033
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=62
+#-----------
+time=310050000
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=63
+#-----------
+time=313845986
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=64
+#-----------
+time=317641950
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=65
+#-----------
+time=321437985
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=66
+#-----------
+time=325233949
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=67
+#-----------
+time=329029942
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=68
+#-----------
+time=332825909
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=69
+#-----------
+time=336621895
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=70
+#-----------
+time=340417859
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=71
+#-----------
+time=344213855
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=72
+#-----------
+time=348009819
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=73
+#-----------
+time=351805847
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=74
+#-----------
+time=355601811
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=75
+#-----------
+time=359397807
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=76
+#-----------
+time=363193771
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=77
+#-----------
+time=366989764
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=detailed
+n5: 13815395 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=78
+#-----------
+time=370785731
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=79
+#-----------
+time=374581717
+mem_heap_B=13815395
+mem_heap_extra_B=39301
+mem_stacks_B=1336
+heap_tree=empty
+#-----------
+snapshot=80
+#-----------
+time=378378692
+mem_heap_B=13816547
+mem_heap_extra_B=39333
+mem_stacks_B=2048
+heap_tree=empty
+#-----------
+snapshot=81
+#-----------
+time=382180503
+mem_heap_B=13817675
+mem_heap_extra_B=39349
+mem_stacks_B=1984
+heap_tree=empty
+#-----------
+snapshot=82
+#-----------
+time=385980599
+mem_heap_B=13817699
+mem_heap_extra_B=39365
+mem_stacks_B=1968
+heap_tree=empty
+#-----------
+snapshot=83
+#-----------
+time=387123354
+mem_heap_B=15912547
+mem_heap_extra_B=39309
+mem_stacks_B=464
+heap_tree=detailed
+n6: 15912547 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 2097152 0x10A446: main (mpi_fft_optimize.cpp:87)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 172 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=84
+#-----------
+time=387123389
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=464
+heap_tree=detailed
+n7: 18009699 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 2097152 0x10A446: main (mpi_fft_optimize.cpp:87)
+ n0: 2097152 0x10A456: main (mpi_fft_optimize.cpp:88)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 171 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=85
+#-----------
+time=387123659
+mem_heap_B=26398307
+mem_heap_extra_B=43357
+mem_stacks_B=992
+heap_tree=peak
+n8: 26398307 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 8388608 0x49523CA: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 8388608 0x48A50C7: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 8388608 0x48A54C2: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 8388608 0x48A5B3C: PMPI_Scatter (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 8388608 0x10A479: main (mpi_fft_optimize.cpp:91)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 2097152 0x10A446: main (mpi_fft_optimize.cpp:87)
+ n0: 2097152 0x10A456: main (mpi_fft_optimize.cpp:88)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 170 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=86
+#-----------
+time=390924944
+mem_heap_B=26399459
+mem_heap_extra_B=43389
+mem_stacks_B=1824
+heap_tree=empty
+#-----------
+snapshot=87
+#-----------
+time=396354026
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=88
+#-----------
+time=400186400
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=89
+#-----------
+time=404492084
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=90
+#-----------
+time=408710084
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=91
+#-----------
+time=412994373
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=92
+#-----------
+time=417779001
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=93
+#-----------
+time=422512669
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=94
+#-----------
+time=426962643
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=95
+#-----------
+time=431255740
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=detailed
+n7: 18009699 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 8388608 0x10A3D3: main (mpi_fft_optimize.cpp:76)
+ n1: 2752512 0x4A1DA1D: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 2752512 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 2752512 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 2752512 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 2752512 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n0: 2097152 0x10A446: main (mpi_fft_optimize.cpp:87)
+ n0: 2097152 0x10A456: main (mpi_fft_optimize.cpp:88)
+ n1: 1310720 0x4A1DADB: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 1310720 0x4A1277F: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 1310720 0x48F710B: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 1310720 0x48F6AEA: PMPI_Init (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n0: 1310720 0x10A314: main (mpi_fft_optimize.cpp:25)
+ n1: 958464 0x49DE07C: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+  n1: 958464 0x4A12F24: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+   n1: 958464 0x498A014: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+    n1: 958464 0x493E229: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+     n1: 958464 0x48975EE: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+      n1: 958464 0x48978CF: ??? (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+       n1: 958464 0x4898220: PMPI_Alltoall (in /usr/lib/x86_64-linux-gnu/libmpich.so.12.1.6)
+        n1: 958464 0x10AFC9: cfft2(int, Complex*, Complex*, Complex*, double, int, int, int) [clone .constprop.7] (mpi_fft_optimize.cpp:173)
+         n0: 958464 0x10A4B4: main (mpi_fft_optimize.cpp:101)
+ n0: 405091 in 171 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=96
+#-----------
+time=435106618
+mem_heap_B=18009699
+mem_heap_extra_B=39317
+mem_stacks_B=616
+heap_tree=empty
+#-----------
+snapshot=97
+#-----------
+time=438902588
+mem_heap_B=5359085
+mem_heap_extra_B=18659
+mem_stacks_B=632
+heap_tree=empty
+#-----------
+snapshot=98
+#-----------
+time=442698567
+mem_heap_B=92387
+mem_heap_extra_B=989
+mem_stacks_B=360
+heap_tree=empty

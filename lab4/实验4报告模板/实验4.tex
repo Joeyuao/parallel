@@ -1,0 +1,283 @@
+%!TeX program = xelatex
+\documentclass{SYSUReport}
+\usepackage{tabularx} % 在导言区添加此行
+\usepackage{float}
+\usepackage{xcolor} % 已加载，无需重复
+\usepackage{graphicx}
+\usepackage{hyperref}
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{orange},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+
+% 根据个人情况修改
+\headl{}
+\headc{}
+\headr{并行程序设计与算法实验}
+\lessonTitle{并行程序设计与算法实验}
+\reportTitle{Lab4-Pthreads并行方程求解与蒙特卡洛}
+\stuname{李源卿}
+\stuid{22336128}
+\inst{计算机学院}
+\major{计算机科学与技术}
+\date{2025年4月16日}
+
+\begin{document}
+
+% =============================================
+% Part 1: 封面
+% =============================================
+\cover
+\thispagestyle{empty} % 首页不显示页码
+\clearpage
+
+% % =============================================
+% % Part 4： 正文内容
+% % =============================================
+% % 重置页码，并使用阿拉伯数字
+% \pagenumbering{arabic}
+% \setcounter{page}{1}
+
+%%可选择这里也放一个标题
+%\begin{center}
+%    \title{ \Huge \textbf{{标题}}}
+%\end{center}
+
+\section{实验目的}
+\begin{itemize}
+    \item 深入理解Pthreads同步机制：条件变量、互斥锁
+    \item 评估多线程加速性能
+\end{itemize}
+
+\section{实验内容}
+\begin{itemize}
+    \item 多线程一元二次方程求解
+    \item 多线程圆周率计算
+\end{itemize}
+\subsection{方程求解}
+\begin{itemize}
+   \item 使用Pthread多线程及求根公式实现并行一元二次方程求解。
+    \item 方程形式为 $x = \frac{-b\pm\sqrt{b^2-4ac}}{2a}$，其中判别式的计算、求根公式的中间值分别由不同的线程完成。
+    \item 通过条件变量识别何时线程完成了所需计算，并分析计算任务依赖关系及程序并行性能。
+    \end{itemize}
+\subsection{蒙特卡洛求圆周率$pi$的近似值}
+\begin{itemize}
+   \item 使用Pthread创建多线程，并行生成正方形内的$n$个随机点。
+    \item 统计落在正方形内切圆内点数，估算$\pi$的值。
+    \item 设置线程数量（1-16）及随机点数量（1024-65536），观察对近似精度及程序并行性能的影响。
+\end{itemize}
+\section{实验代码说明}
+\subsection{方程求解}
+我认为对于求解一元二次方程，使用多线程颇有种杀鸡用牛刀的感觉，但是在写程序的过程中可以深化我们对于
+条件变量的理解，熟悉条件变量的使用。\\
+与实验文档中的不同，为了能多练习一次使用条件变量，我没有仅仅使用三个线程去完成，而是创建了五个线程
+，工作流如下：\\
+时间步1：thread 0: 计算$b^{2}$ \quad  thread 1: 计算$4*a*c$  \\
+时间步2：thread 2 : 计算$\delta$\\
+时间步3：thread 3: 计算$x_1$\quad thread 4: 计算 $x_2$\\
+线程 2 需要等待线程 0 和线程 1的结果，这里就需要用到条件变量，而线程3 和线程4 需要等待线程 2的结果，
+这里也需要用到条件变量。\\
+为了实现线程 0，1，2的同步，我设置了一个条件变量，一个互斥量，以及一个计数器：
+\begin{lstlisting}[language=c]
+pthread_mutex_t mutex0 = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond0 = PTHREAD_COND_INITIALIZER;
+int cnt = 0;
+\end{lstlisting}
+然后将cnt作为临界资源，线程0和线程1计算好之后就会把cnt加一，线程2则一直等待cnt变成2：
+\begin{lstlisting}[language=c]
+void* calculate_b_2(void* arg){
+    b_2 = b * b;
+    //计算完结果之后将cnt+1
+    pthread_mutex_lock(&mutex0);
+    cnt++;
+    pthread_mutex_unlock(&mutex0);
+    //thread 0和1都计算好了，就唤醒thread 2。
+    if(cnt == 2)pthread_cond_broadcast(&cond0);
+    return NULL;
+}
+
+void* calculate_ac_4(void* arg){
+    ac_4 = 4 * a *c;
+    //计算完结果之后将cnt+1
+    pthread_mutex_lock(&mutex0);
+    cnt++;
+    pthread_mutex_unlock(&mutex0);
+    //thread 0和1都计算好了，就唤醒thread 2。
+    if(cnt == 2)pthread_cond_broadcast(&cond0);
+    return NULL;
+}
+
+void* calculate_delt(void* arg){
+    //等待条件满足（thread 0，1的中间结果计算完毕）
+    pthread_mutex_lock(&mutex0);
+    while (cnt != 2)
+    {
+        pthread_cond_wait(&cond0, &mutex0);
+    }
+    pthread_mutex_unlock(&mutex0);
+    //计算delt
+    delt=b_2 - ac_4;
+    // delt =b * b - 4 * a * c; 
+    //唤醒线程3和4
+    pthread_mutex_lock(&mutex);
+    condition = true;
+    pthread_mutex_unlock(&mutex);
+    pthread_cond_broadcast(&cond);
+    return NULL;
+}
+\end{lstlisting}
+后面同步thread 3,4,5的方法也类似，为了简洁一些，就不放在报告里了。
+\subsection{蒙特卡洛求圆周率$pi$的近似值}
+大体思路很明确：就是把任务总量÷线程数，平均分到每个线程，然后每个线程在自己内部统计落在1/4圆的点数，最后汇总。
+我在汇总的时候没有使用mutex上锁，而是运用了线程函数返回结果的机制：
+\begin{lstlisting}[language=c]
+void* local(void* arg) {
+    ThreadArgs *args = (ThreadArgs*) arg;
+    int *local_sum = malloc(sizeof(int));
+    *local_sum = 0;
+
+    for (int i = 0; i < args->iterations; i++) {
+        double x, y;
+        drand48_r(&args->rand_state, &x);  // 生成[0,1)的随机数
+        drand48_r(&args->rand_state, &y);
+        *local_sum += (x*x + y*y) <= 1.0;
+    }
+
+    pthread_exit(local_sum);
+}
+...
+// 回收结果
+in_cycle_sum = 0;
+for (int i = 0; i < num_threads; i++) {
+    int *local_sum;
+    pthread_join(threads[i], (void**)&local_sum)
+    in_cycle_sum += *local_sum;
+    free(local_sum);
+}
+\end{lstlisting}
+这里的随机数生成器的选取和并行性能有很大关联，这一点在结果分析中会细说。
+\section{实验结果与分析}
+\subsection{方程求解}
+\begin{itemize}
+    \item 分析不同线程配置下的求解时间，评估并行化带来的性能提升。
+    \item 对比单线程与多线程方案在处理相同方程时的表现，讨论可能存在的瓶颈或优化空间。
+\end{itemize}
+\subsubsection{不同线程配置求解时间对比}
+我另外实现了三个线程进行方程求解，在my\_solve1.c中。并分别进行了测试，结果如下：\\
+(其中s是五个线程的版本，s1是三个线程的版本)\\
+\begin{figure}[htbp]
+    \centering          % 图片居中
+    \includegraphics[width=0.8\textwidth]{figures/image1.png} % 图片路径和宽度
+    \caption{fig:s-5 threads;s1-3 threads}  % 图片标题
+    \label{fig:s-5 threads；s1-3 threads} % 图片标签（用于交叉引用）
+\end{figure}
+取10次实验结果的平均值后，五线程版本的平均耗时为0.0003224s，三线程的平均耗时为0.0001936s。
+而串行版本的耗时则极短，与并行版本的时间消耗不在一个数量级。
+\subsubsection{可能的瓶颈和优化空间}
+并行版本慢的原因在于并行计算中间量所节省的时间并无法弥补同步线程的开销。对临界区上锁
+会使得操作系统进入内核态然后切换至用户态，导致时间开销增大，我认为这是三线程版本慢于
+串行版本的原因；而五线程慢于三线程版本，除了同步线程的开销更大的原因之外，还有我的电脑是
+四个物理核的原因，五个线程的一定会涉及到线程的调度，也存在一定的开销。\\
+该问题的优化空间:\\
+\begin{itemize}
+    \item 开根的结果$\sqrt{\Delta}$可以复用（但我尝试了一下发现作用不大）。
+    \item 减少线程数，合并轻量任务：将 calculate\_b\_2 和 calculate\_ac\_4 合并到一个线程中，避免两次线程创建和锁操作。
+    \item 由于目前只解一个方程，所以并行性能没有体现出来，当方程数增多时，我们可以让两个线程先并行计算
+        中间变量b\_2和ac\_4，然后再由一个线程根据已经得出的中间变量
+        b\_2和ac\_4算$\sqrt{\Delta}$，
+        最后两个线程再利用$\sqrt{\Delta}$并行计算x\_1和x\_2。这样的
+        流水线处理应该可以有不错的性能。
+\end{itemize}
+\subsection{蒙特卡洛方法求圆周率}
+
+\begin{itemize}
+\item 比较不同线程数量和随机点数量下圆周率估计的准确性和计算速度。
+\item 讨论增加线程数量是否总能提高计算效率，以及其对圆周率估计精度的影响。
+\item 提供实验数据图表，展示随着线程数和随机点数的变化，计算效率和精度的趋势。
+\item 分析实验过程中遇到的问题，如同步问题、负载不均等，并提出相应的解决策略。
+\end{itemize}
+\subsubsection{随机点数和线程数对计算效率和估算精度的影响}
+我用python读取实验结果只做了下面的图表。图2和图3反映了不同数量线程下
+误差随着随机点数的变化的趋势（如果觉得图2有点乱可以看图3）。\\
+可以看到，随着随机点数的增加，使用不同线程数目的程序的结果误差都在下降。
+但是使用线程数目的增加对于准确率（误差）几乎没有影响。在随机点数超过60000
+之后，使用不同线程数目的程序的结果误差都相差不大，并且误差和线程数目没有相关性。\\
+这说明使用的线程数目对程序的结果的准确性没有太多影响，但是使用的随机点数的数目对
+程序的结果的准确性有很大影响，随机点数越多，结果越准确。\\
+\begin{figure}[htbp]
+    \centering          % 图片居中
+    \includegraphics[width=0.8\textwidth]{figures/Figure_3.png} % 图片路径和宽度
+    \caption{误差随随机点数的变化}  % 图片标题
+    \label{error1} % 图片标签（用于交叉引用）
+\end{figure}
+\begin{figure}[htbp]
+    \centering          % 图片居中
+    \includegraphics[width=0.8\textwidth]{figures/Figure_1.png} % 图片路径和宽度
+    \caption{误差随随机点数的变化}  % 图片标题
+    \label{error} % 图片标签（用于交叉引用）
+\end{figure}
+（效率计算：$T_{serial}/(T_{parallel}*thread\_num)$）\\
+图四反映了使用不同数目的线程的程序效率随着随机点数的变化。可以看到，在使用同等数量的
+随机点数的情况下，使用的线程增加，效率下降；且使用任何数量的线程的程序，随着随机点数数量的增加
+，其效率都在提升。\\
+这说明线程数增多，效率下降；且随着随机点数的增加，效率上升，这说明这是一个弱可拓展性的程序。\\
+\begin{figure}[htbp]
+    \centering          % 图片居中
+    \includegraphics[width=0.8\textwidth]{figures/Figure_2.png} % 图片路径和宽度
+    \caption{效率随随机点数的变化}  % 图片标题
+    \label{efficiency} % 图片标签（用于交叉引用）
+\end{figure}
+图五和六反映了使用不同线程在不同随机点数下的加速比变化。可以看到，
+四线程的程序表现最优秀，这是因为物理核的数目是四核，线程数目超过四只会
+徒增线程的调度成本，线程数不足四核可能会让cpu的核空闲，所以四核
+的表现是最好的。
+\begin{figure}[htbp]
+    \centering          % 图片居中
+    \includegraphics[width=0.8\textwidth]{figures/speed_1.png} % 图片路径和宽度
+    \caption{效率随随机点数的变化}  % 图片标题
+    \label{speed1} % 图片标签（用于交叉引用）
+\end{figure}
+\begin{figure}[htbp]
+    \centering          % 图片居中
+    \includegraphics[width=0.8\textwidth]{figures/speed_2.png} % 图片路径和宽度
+    \caption{效率随随机点数的变化}  % 图片标题
+    \label{speed2} % 图片标签（用于交叉引用）
+\end{figure}
+\subsubsection{遇到的问题和解决办法}
+\textbf{线程安全的随机数生成器}\\
+我一开始使用的是stdlib中的rand()函数，但是这个函数不是可重入的或线程安全的。
+即可能会出现竞争条件，该函数不适用于并行计算的场景，在stackoverflow中的帖子中提到：
+不同的线程得到了相同的数字。在我们的计算任务中，这会使得我们的每个线程都在计算
+相同的随机序列，会降低我们程序的准确性。另一方面，用这个函数会导致
+我的程序跑的很慢，2线程版本几乎是1线程版本的九倍时间。\\
+于是我换成了线程安全的 drand48\_r 。\\
+（参考：\href{https://stackoverflow.org.cn/questions/6161322}{stackoverflow}； \href{https://zhuanlan.zhihu.com/p/337921529}{知乎}）\\
+\textbf{伪共享与数据对齐}\\
+换成了线程安全的 drand48\_r之后，并行版本的速度确实有所提升，但是仍然
+不如串行版本。这跟我的线程参数有很大关系：
+\begin{lstlisting}[language=c]
+//我的线程参数结构体：
+struct ThreadArgs{
+    long long iterations;        // 本线程需要计算的迭代次数
+    struct drand48_data rand_state;  // 线程独立的随机数状态
+};    
+//线程参数申明
+struct ThreadArgs args[num_threads];
+\end{lstlisting}
+这样看起来似乎没有问题，但其实有比较大的性能上的隐患。
+ThreadArgs中的rand\_state是drand48的种子，同时也记录了
+随机数生成器的中间状态，也就是说，rand\_state会经常被修改
+。那么，假设线程0的rand\_state被修改，如果线程1的rand\_state和
+线程0的rand\_state在同一行cache line，那么线程1的rand\_state
+就会被标记失效，如果线程1调用随机数生成函数的时候就会cahce miss。
+这就造成了伪共享。
+解决办法就是把线程变量做一个内存对齐，这会保证每个线程
+参数结构体在不同的cahce line，就能解决上述问题，得到
+正常的并行程序的性能。
+\end{document}

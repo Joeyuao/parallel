@@ -1,0 +1,238 @@
+\documentclass{SYSUReport}
+\usepackage{tabularx} % 在导言区添加此行
+\usepackage{graphicx}
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{orange},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}
+% 根据个人情况修改
+\headl{}
+\headc{}
+\headr{并行程序设计与算法实验}
+\lessonTitle{并行程序设计与算法实验}
+\reportTitle{Lab2-基于MPI的并行矩阵乘法(进阶)}
+\stuname{李源卿}
+\stuid{22336128}
+\inst{计算机学院}
+\major{计算机科学与技术}
+\date{2025年4月2日}
+
+\begin{document}
+
+% =============================================
+% Part 1: 封面
+% =============================================
+\cover
+\thispagestyle{empty} % 首页不显示页码
+\clearpage
+
+% =============================================
+% Part 4： 正文内容
+% =============================================
+% 重置页码，并使用阿拉伯数字
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% 可选择这里也放一个标题
+%\begin{center}
+%    \title{ \Huge \textbf{{标题}}}
+%\end{center}
+
+\section{实验目的}
+\begin{itemize}
+    \item 掌握MPI集合通信在并行矩阵乘法中的应用
+    \item 学习使用MPI\_Type\_create\_struct创建派生数据类型
+    \item 分析不同通信方式和任务划分对并行性能的影响
+    \item 研究并行程序的扩展性和性能优化方法
+\end{itemize}
+
+\section{实验内容}
+\begin{itemize}
+    \item 使用MPI集合通信实现并行矩阵乘法
+    \item 使用MPI\_Type\_create\_struct聚合进程内变量后通信
+    \item 选做：尝试不同数据/任务划分方式
+    \begin{itemize}
+        \item 请描述你的数据/任务划分方式。
+        \item 回答：......
+    \end{itemize}
+\end{itemize}
+
+\section{代码说明}
+\subsection{SPMD}
+与之前使用Recv和Send不同的是，Bcast，Scatterv和Gatherv需要每个进程都调用。
+所以没有使用如下格式:
+\begin{lstlisting}[language=c++]
+    if(rank==0){
+        ...
+    }
+    else{
+        ...
+    }
+\end{lstlisting}
+而是采取：
+\begin{lstlisting}[language=c++]
+    MPI_Bcast(...);
+    if(rank==0){
+        ...
+    }
+    MPI_Scatterv(...);
+\end{lstlisting}
+\subsection{Scatterv和Gatherv}
+Scatterv和Gatherv的好处在于可以将不同长度的数据散射到各个进程，
+在无法均匀分配实验数据时，我们可以用这两个函数来实现集合通讯。
+\begin{lstlisting}[language=c++]
+rows_per_process = (int *)malloc(size * sizeof(int));
+displs = (int *)malloc(size * sizeof(int));
+recvcounts = (int *)malloc(size * sizeof(int));
+// 规划数据分组
+int base_rows = m / size;
+int remainder = m % size;
+int cur_row = 0;
+if (rank == 0) {
+    for (int i = 0; i < size; i++) {
+        // 前 remainder 个进程多处理一行
+        rows_per_process[i] = base_rows + (i < remainder ? 1 : 0);
+        displs[i] = cur_row * k; //偏移量
+        cur_row += rows_per_process[i];
+        recvcounts[i] = rows_per_process[i] * k; // 每个进程接收的元素数
+    }
+}
+...
+MPI_Scatterv(A, recvcounts, displs, MPI_DOUBLE,
+        A_local, recvcounts[rank], MPI_DOUBLE,
+        0, MPI_COMM_WORLD);
+//A-发送缓冲区 recvcounts[i]表示第i个进程接收的数组大小displs[i]表示每个进程接收的数据在A中的起始位置。
+//0表示0是根进程，像MPI_DOUBLE则是数据类型，MPI_COMM_WORLD是通讯集合
+...
+MPI_Gatherv(C_local, rows_per_process[rank] * n, MPI_DOUBLE,
+        C, recvcounts, displs, MPI_DOUBLE,
+        0, MPI_COMM_WORLD);
+//C_local 待聚合的本地缓冲区（发送缓冲区），rows_per_process[rank] * n为发送数据量，c为接收缓冲区，recvcounts是一个存储了各个进程发送量的数组，displs决定了每个进程发送来的数据将在C的什么位置开始记录。
+\end{lstlisting}
+\subsection{MPI\_Type\_create\_struct}
+MPI\_Type\_create\_struct的优势在于可以把不同类型的数据打包，但是在本次实验中不涉及打包
+不同类型的数据，于是我自定义了三个类型的数据：
+\subsubsection{mkn\_type}
+\begin{lstlisting}[language=c++]
+typedef struct {
+    int m;
+    int k;
+    int n;
+} mkn;
+MPI_Datatype mkn_type;
+{
+    int blocklengths[3] = {1, 1, 1};
+    MPI_Datatype types[3] = {MPI_INT, MPI_INT, MPI_INT};
+    MPI_Aint displacements[3];
+    displacements[0] = 0;
+    displacements[1] = 4;
+    displacements[2] = 8;
+    MPI_Type_create_struct(3, blocklengths, displacements, types, &mkn_type);
+    MPI_Type_commit(&mkn_type);
+}
+\end{lstlisting}
+
+\subsubsection{size\_len\_block}
+以上是比较标准的流程，对于不同类型的数据很有必要，因为每个数据的偏移量可能不同。
+但是对于相同的数据，像下面这样创建更加方便：
+\begin{lstlisting}[language=c++]
+MPI_Datatype size_len_block;
+{
+    int blocklengths = size;
+    MPI_Datatype types = MPI_INT;
+    MPI_Aint displacements = 0;
+    //这里都需要取地址
+    MPI_Type_create_struct(1, &blocklengths, &displacements, &types, &size_len_block);
+    MPI_Type_commit(&size_len_block);
+}
+\end{lstlisting}
+
+我还打包了矩阵B，不过和上面的size\_len\_block一致，就不放到报告里了。
+
+\section{实验结果}
+\subsection{正确性}
+之前的实验其实我都验证过，但是没有在报告里指出。
+此处用9×9的矩阵做验证。
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/image.png}
+    \caption{numpy结果}
+    \label{fig:example}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/image1.png}
+    \caption{程序结果}
+    \label{fig:example1}
+\end{figure}
+\subsection{性能分析}
+根据运行结果，填入下表以记录不同线程数量和矩阵规模下的运行时间：
+\begin{table}[htbp]
+    \centering
+    \caption{用MPI集合通信实现}
+    \label{表1}
+    \begin{tabular}{|c|l|l|l|l|l|}
+        \hline
+        \multirow{2}{*}{进程数} & \multicolumn{5}{c|}{矩阵规模} \\ \cline{2-6} 
+        & 128 & 256 & 512 & 1024 & 2048 \\ \hline
+        1 &0.012799s&0.098125s& 0.778544s&6.149306s&44.429201s\\ \hline
+        2 &0.007039s&0.051697s&0.392966s&2.658302s&20.433961s\\ \hline
+        4 &0.004355s&0.027613s&0.220402s&1.378771s&10.776583s\\ \hline
+        8 &0.005023s&0.016130s&0.372274s&1.538535s&10.776583s\\ \hline
+        16 &0.004399s&0.104787s&0.493304s&2.714182s&20.777025s\\ \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{用MPI\_Type\_create\_struct聚合进程内变量}
+    \label{表2}
+    \begin{tabular}{|c|l|l|l|l|l|}
+        \hline
+        \multirow{2}{*}{进程数} & \multicolumn{5}{c|}{矩阵规模} \\ \cline{2-6} 
+        & 128 & 256 & 512 & 1024 & 2048 \\ \hline
+        1 &0.012969s&0.099214s&0.776359s&6.149796s&40.722858s\\ \hline
+        2 &0.007144s&0.051306s&0.397161s&2.688867s&20.630480s\\ \hline
+        4 &0.004386s&0.023349s&0.202343s&1.347274s&10.715022s\\ \hline
+        8 &0.005222s&0.016376s&0.197371s&1.472587s&11.182086s\\ \hline
+        16 &0.005011s&0.092633s&0.397388s&2.615108s&19.298225s\\ \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{选做题实验结果请填写在此表}
+    \label{表3}
+    \begin{tabular}{|c|l|l|l|l|l|}
+        \hline
+        \multirow{2}{*}{进程数} & \multicolumn{5}{c|}{矩阵规模} \\ \cline{2-6} 
+        & 128 & 256 & 512 & 1024 & 2048 \\ \hline
+        1 &  &  &  &  &  \\ \hline
+        2 &  &  &  &  &  \\ \hline
+        4 &  &  &  &  &  \\ \hline
+        8 &  &  &  &  &  \\ \hline
+        16 &  &  &  &  &  \\ \hline
+    \end{tabular}
+\end{table}
+
+\section{实验分析}
+根据运行时间，分析程序并行性能及扩展性
+\begin{itemize}
+    \item 使用MPI集合通信实现并行矩阵乘法：是强可拓展的。问题规模为128情况下，当进程数扩大为原来两倍的时候，加速比都约为1.7，
+    效率几乎没变，其余情况加速比都约为2。所以是强可拓展的。
+    \item 使用MPI\_Type\_create\_struct聚合进程内变量后通信：是强可拓展的，当核数加倍时，
+    时间缩短为原来的1/2左右（规模为128时，问题规模增加为原来2倍，加速比约为1.7，效率保持稳定）。另外在性能方面我们可以看进程数为16时，使用普通集合通信和使用
+    MPI\_Type\_create\_struct的对比，我们会发现使用MPI\_Type\_create\_struct的时间会稍微短
+    一些，这说明虽然创建自定义类型需要耗费一些时间，但是也能带来一些收益。
+    \item 你的方法(选做)：
+\end{itemize}
+\end{document}

@@ -1,0 +1,310 @@
+%!TeX program = xelatex
+\documentclass{SYSUReport}
+\usepackage{tabularx} % 在导言区添加此行
+\usepackage{graphicx}
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{orange},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}
+% 根据个人情况修改
+\headl{}
+\headc{}
+\headr{并行程序设计与算法实验}
+\lessonTitle{并行程序设计与算法实验}
+\reportTitle{Lab1-基于MPI的并行矩阵乘法}
+\stuname{李源卿}
+\stuid{22336128}
+\inst{计算机学院}
+\major{计算机科学与技术}
+\date{2025年3月26日}
+
+\begin{document}
+
+% =============================================
+% Part 1: 封面
+% =============================================
+\cover
+\thispagestyle{empty} % 首页不显示页码
+\clearpage
+
+% % =============================================
+% % Part 4： 正文内容
+% % =============================================
+% % 重置页码，并使用阿拉伯数字
+% \pagenumbering{arabic}
+% \setcounter{page}{1}
+
+%%可选择这里也放一个标题
+%\begin{center}
+%    \title{ \Huge \textbf{{标题}}}
+%\end{center}
+
+\section{实验目的}
+\begin{itemize}
+   \item 掌握 MPI 程序的编译和运行方法。
+    \item 理解 MPI 点对点通信的基本原理。
+    \item 了解 MPI 程序的 GDB 调试流程。
+\end{itemize}
+
+\section{实验内容}
+\begin{itemize}
+   \item 使用 MPI 点对点通信实现并行矩阵乘法。
+    \item 设置进程数量（1$\sim$16）及矩阵规模（128$\sim$2048）。
+    \item 根据运行时间，分析程序的并行性能。
+\end{itemize}
+
+\section{实验步骤}
+\subsection{使用MPI进行矩阵乘法}
+这两个函数在本次实验中可以承担所有的通讯职能，并且使用方法简单。
+需要达到类似广播的功能只需要在根进程
+用for循环对每个进程都使用Send发送一个消息，然后在其他进程调
+用Recv接收就好了。
+收集结果的时候也使用for循环达到了类似Scatter的效果。
+\begin{lstlisting}[language=c++]
+#include <mpi.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+// A:m*k B:k*n C:m*n
+void matrix_multiply(double *A, double *B, double *C, int rows, int n, int kk) {
+    for (int i = 0; i < rows; ++i) {          
+        for (int k = 0; k < kk; ++k) {     
+            double a = A[i*kk+k];                
+            for (int j = 0; j < n; ++j) {  
+                C[i*n+j] += a * B[k*n+j];   
+            }
+        }
+    }
+}
+void pirnt_mat(double* A,int m,int n){
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            printf("%lf ",A[i*n+j]);
+        }
+        printf("\n");
+    }
+    
+}
+
+int main(int argc,char **argv){
+    // printf("%d\n",argc);
+    // printf("%s\n",argv[2]);
+    //初始化
+    MPI_Init(&argc, &argv);
+    double *C = NULL;
+    int rank, p;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &p);
+    int m , n , k ; 
+    double *A = NULL;
+    double *B = NULL;
+    
+    if(rank==0){
+        //输入维度
+        printf("input the m,n,k:\n");
+        scanf("%d%d%d",&m,&n,&k);
+        int mnk[3]={m,n,k};
+        MPI_Bcast(mnk,3,MPI_INT,0,MPI_COMM_WORLD);
+        m=mnk[0];n=mnk[1];k=mnk[2];
+        //初始化A和B矩阵
+        A=(double*)malloc(m*k*sizeof(double));
+        B=(double*)malloc(k*n*sizeof(double));
+        C=(double*)malloc(m*n*sizeof(double));
+        for (int i = 0; i < m*k; i++)
+        {
+            A[i]=i+1;
+        }
+        for (int i = 0; i < k*n; i++)
+        {
+            B[i]=i+1;
+        }
+        //规划数据的分组
+        int *rows_per_rank = (int *)malloc(p * sizeof(int));
+        int *start_row_per_rank = (int *)malloc(p * sizeof(int));
+        int remainder = m % p;
+        int base_rows = m / p;
+        int current_start = 0;
+        for (int i = 0; i < p; i++)
+        {
+            //前remainder组多算一行，刚好不多余
+            rows_per_rank[i]=(i<remainder)?base_rows+1:base_rows;
+            start_row_per_rank[i]=current_start;
+            current_start+=rows_per_rank[i];
+        }
+        //发送切好片的A矩阵和整个B矩阵，发rows_per_rank[i]是因为接收方需要用来接收矩阵A和发送矩阵C
+        for (int i = 1; i < p; i++)
+        {
+            MPI_Send(&rows_per_rank[i],1,MPI_INT,i,0,MPI_COMM_WORLD);
+            MPI_Send(A+start_row_per_rank[i]*k,rows_per_rank[i]*k,MPI_DOUBLE,i,1,MPI_COMM_WORLD);
+            MPI_Send(B,k*n,MPI_DOUBLE,i,2,MPI_COMM_WORLD);
+        }
+        //矩阵乘（调整过循环顺序）
+        matrix_multiply(A,B,C,rows_per_rank[0],n,k);
+        for (int i = 1; i < p; i++)
+        {
+            //收集结果
+            MPI_Recv(C+start_row_per_rank[i]*n,rows_per_rank[i]*n,MPI_DOUBLE,i,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+        }
+        pirnt_mat(C,m,n);
+        free(A);
+        free(B);
+        free(C);
+        free(rows_per_rank);
+        free(start_row_per_rank);
+    }
+    else{
+        //获取矩阵维度
+        int mnk[3]={};
+        MPI_Bcast(mnk,3,MPI_INT,0,MPI_COMM_WORLD);
+        m=mnk[0];n=mnk[1];k=mnk[2];
+        //获取当前进程需要算的行数
+        int local_rows=0;
+        MPI_Recv(&local_rows,1,MPI_INT,0,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+        A=(double*)malloc(local_rows*k*sizeof(double));
+        B=(double*)malloc(n*k*sizeof(double));
+        double* C=(double*)malloc(local_rows*n*sizeof(double));
+        //接受矩阵A，B
+        MPI_Recv(A,local_rows*k,MPI_DOUBLE,0,1,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+        MPI_Recv(B,n*k,MPI_DOUBLE,0,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+        matrix_multiply(A,B,C,local_rows,n,k);
+        //返回结果给根进程
+        MPI_Send(C,local_rows*n,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
+        free(A);
+        free(B);
+        free(C);
+    }
+    
+    MPI_Finalize();
+    return 0;
+}
+\end{lstlisting}
+
+% \subsubsection{仅使用\texttt{MPI_Send}和\texttt{MPI_Recv}}
+
+
+\section{实验结果}
+\subsection{计时}
+\begin{itemize}
+    \item 由于我暂时没有调整进程的上限个数,所以运行环境是在超算习堂
+    \item 测试时间的函数使用了MPI\_Wtime，这是一个高分辨率、经过 (或墙) 时钟。
+    单位为s。
+    \item 测试结果是统计的最慢的进程所用的时间
+\end{itemize}
+计时函数参考：https://learn.microsoft.com/zh-cn/message-passing-interface/mpi-wtime-function\\
+测试代码：
+\begin{lstlisting}[language=c++]
+    if(rank==0){
+        //输入维度
+        printf("input the m,n,k:\n");
+        scanf("%d%d%d",&m,&n,&k);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    double start=MPI_Wtime();
+    ......
+    double time=MPI_Wtime()-start;
+    printf("process %d costs %lfs\n",rank,time);
+    double max_time;
+    MPI_Reduce(&time,&max_time,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
+    if(rank==0){
+        printf("the max time: %lfs\n",max_time);
+    }
+    MPI_Finalize();
+    return 0;
+\end{lstlisting}
+\subsection{运行时间}
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+% \usepackage{multirow}
+% \usepackage{graphicx}
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+% \usepackage{multirow}
+% \usepackage{graphicx}
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[htpb]
+\centering
+\begin{tabular}{|c|lllll|}
+\hline
+\multirow{2}{*}{进程数} & \multicolumn{5}{c|}{矩阵规模}                                                                        \\ \cline{2-6} 
+ & \multicolumn{1}{l|}{128} & \multicolumn{1}{l|}{256} & \multicolumn{1}{l|}{512} & \multicolumn{1}{l|}{1024} & 2048 \\ \hline
+1                    & \multicolumn{1}{l|}{0.012775s} & \multicolumn{1}{l|}{0.082896s} & \multicolumn{1}{l|}{0.643198s} & \multicolumn{1}{l|}{5.206706s} &41.496786s\\ \hline
+2                    & \multicolumn{1}{l|}{0.005949s} & \multicolumn{1}{l|}{0.042818s} & \multicolumn{1}{l|}{0.324621s} & \multicolumn{1}{l|}{2.629395s} &21.415073s\\ \hline
+4                    & \multicolumn{1}{l|}{0.004561} & \multicolumn{1}{l|}{0.024158s} & \multicolumn{1}{l|}{0.172887s} & \multicolumn{1}{l|}{1.381328s} &10.611006s\\ \hline
+8                   & \multicolumn{1}{l|}{0.004862s} & \multicolumn{1}{l|}{0.015255s} & \multicolumn{1}{l|}{0.255603s} & \multicolumn{1}{l|}{1.826807s} &11.766949s\\ \hline
+16                   & \multicolumn{1}{l|}{0.106172s} & \multicolumn{1}{l|}{0.017869s} & \multicolumn{1}{l|}{0.496006s} & \multicolumn{1}{l|}{2.704538s} &18.485188s\\ \hline
+\end{tabular}
+\end{table}
+\subsection{结果分析}
+我们可以看到，随着进程数的增多，运行时间也不一定越快，结合课上所学和自己的思考，我觉得主要是以下两点原因：
+\begin{itemize}
+   \item 超算习堂的实验环境中，真实的物理核数是4，
+   那么当进程数超过物理核之后，系统就会对多个进程进行调度，让这些进程
+   轮流上处理器运行。所以当进程数小于等于物理核对时候，加速比和我们所设想的增长
+   几乎一致，两个核快两倍，四个核快四倍，但是多余四个核表现不佳，这是因为处于运行中的进程有限，其他的大多处于挂起状态。
+   \item 其次我考虑到的原因是进程间的通信开销，因为进程越多，需要通信的次数也越多，通信的开销也会变大。 
+\end{itemize}
+我们横向对比前三行（进程数为1,2,4），会发现每一行的前一个耗时是后一个耗时的8倍左右，这是符合我们预期的。
+因为矩阵乘法是$O(n^3)$开销，那么$n->2n$，总开销就扩大8倍。
+\\当进程数多于物理核的时候，时间开销就和操作系统对进程的调度有更强的关系了，所以8倍关系不是特别明显。
+\section{讨论题}
+\subsection{在内存受限情况下，如何进行大规模矩阵乘法计算？}
+    回答：在内存受限的情况下，如果我们要进行大规模的矩阵乘法，
+    那么我们需要特别关注的地方一定是磁盘I/O时间，因为内存受限
+    ，我们的内存可能无法存下太多数据，有部分矩阵的数据就要从磁盘中读取，
+    这往往是很费时间的操作；其次，我们也可以关注cache的命中率（可以使用循环展开，调整循环顺序等）。
+    \begin{itemize}
+        \item 矩阵分块：将大矩阵A（m×n）和B（n×p）划分为适合内存的子块。例如：
+            \subitem  将A按行划分为多个大小为 $m_b \times n$ 的块。
+            \subitem  将B按列划分为多个大小为 $n \times p_b$ 的块。
+            \subitem  将结果C存储为$m_b \times p_b$大小的块。
+            \subitem  假设矩阵中元素是double，那么要保证
+            \\ \quad \quad \quad \quad \quad$(m_b*n+n*p_b+m_b*p_b)*sizeof(double)\leq$内存大小
+        \item 可以固定已经加载进入内存的A或者B的块，若固定了B的块（即B的某几列），
+        那么我们可以依次加载A的所有块进入内存，即只替换A的块，以此来减少I/O次数。
+        \item 按行或列顺序存储矩阵数据，减少磁盘寻道时间。例如，将A的行块连续存储，B的列块按访问顺序存储（列优先存储），这样可以让读入内存的块有尽可能多的我们想要的数据。
+        \item 结合循环展开，循环顺序调整，以及SIMD指令来计算C矩阵中元素来加速计算。
+        \item 结合Strassen等快速矩阵乘法算法，减少计算量，间接降低内存压力。
+    \end{itemize}
+\subsection{如何提高大规模稀疏矩阵乘法性能？}
+
+    回答：\\
+    用CSR格式压缩存储矩阵A和矩阵B：
+    \begin{itemize}
+        \item row\_ptr：长度为m+1（m为行数），row\_ptr[i]到row\_ptr[i+1]-1为第i行的非零元素索引。
+        \item col\_indices：非零元素的列索引。
+        \item values：非零元素的值。
+    \end{itemize}
+    此时我们应该把矩阵B也按照行优先存储，因为下面的算法是调整过循环顺序的（也就是我们不会在第三次循环中直接算出$C_{i,j}$）
+
+    \begin{lstlisting}[language=c++]
+        // 假设C初始化为全零的密集矩阵
+    for (int i = 0; i < A_rows; i++) {
+        for (int k_ptr = A.row_ptr[i]; k_ptr < A.row_ptr[i+1]; k_ptr++) {
+            int k = A.col_indices[k_ptr];
+            float A_ik = A.values[k_ptr];
+            for (int j_ptr = B.row_ptr[k]; j_ptr < B.row_ptr[k+1]; j_ptr++) {
+                int j = B.col_indices[j_ptr];
+                float B_kj = B.values[j_ptr];
+                C[i][j] += A_ik * B_kj; // 累加到结果矩阵
+            }
+        }
+    }
+    
+    \end{lstlisting}
+    这样我们就在牺牲了一部分空间的代价下，跳过了对矩阵元素0的运算。
+\end{document}

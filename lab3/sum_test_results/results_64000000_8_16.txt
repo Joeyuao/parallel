@@ -1,0 +1,5 @@
+is correct :YES 
+serial time taken: 0.000026 seconds
+parallel time taken: 0.000026 seconds
+Speedup: 5.42
+Efficiency: 67.73%

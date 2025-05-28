@@ -1,0 +1,245 @@
+%!TeX program = xelatex
+\documentclass{SYSUReport}
+\usepackage{tabularx} % 在导言区添加此行
+\usepackage{float}
+\usepackage{xcolor} % 已加载，无需重复
+\usepackage{graphicx}
+\usepackage{hyperref}
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{orange},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+% 根据个人情况修改
+\headl{}
+\headc{}
+\headr{并行程序设计与算法实验}
+\lessonTitle{并行程序设计与算法实验}
+\reportTitle{Lab5-基于OpenMP的并行矩阵乘法}
+\stuname{李源卿}
+\stuid{22336128}
+\inst{计算机学院}
+\major{计算机科学与技术}
+\date{2025年5月4日}
+
+\begin{document}
+
+% =============================================
+% Part 1: 封面
+% =============================================
+\cover
+\thispagestyle{empty} % 首页不显示页码
+\clearpage
+
+% % =============================================
+% % Part 4： 正文内容
+% % =============================================
+% % 重置页码，并使用阿拉伯数字
+% \pagenumbering{arabic}
+% \setcounter{page}{1}
+
+%%可选择这里也放一个标题
+%\begin{center}
+%    \title{ \Huge \textbf{{标题}}}
+%\end{center}
+
+\section{实验目的}
+\begin{itemize}
+    \item 掌握OpenMP编程的基本流程
+    \item 掌握常见的OpenMP编译指令和运行库函数
+    \item 分析调度方式对多线程程序的影响
+\end{itemize}
+
+\section{实验内容}
+\begin{itemize}
+ \item 使用OpenMP实现并行通用矩阵乘法
+\item 设置线程数量（1-16）、矩阵规模（128-2048）、调度方式
+\begin{itemize}
+    \item 调度方式包括默认调度、静态调度、动态调度
+\end{itemize}
+\item 根据运行时间，分析程序并行性能
+\item 选做：根据运行时间，对比使用OpenMP实现并行矩阵乘法与使用Pthreads实现并行矩阵乘法的性能差异，并讨论分析。
+\end{itemize}
+\section{实验代码说明}
+使用Openmp来实现并行化很简单，只需要在矩阵乘法的外层for循环前加上预编译指令：
+\begin{lstlisting}[language=c]
+#pragma omp parallel for (schedule(guided|dynamic|default|static))?
+\end{lstlisting}
+即可。
+\begin{lstlisting}[language=c]
+case DYNAMIC: // 动态调度
+#pragma omp parallel for schedule(dynamic)
+for (int i = 0; i < N; i++) {
+    for (int j = 0; j < N; j++) {
+        double sum = 0.0;
+        for (int k = 0; k < N; k++) {
+            sum += A[i*N + k] * B[k*N + j];
+        }
+        C[i*N + j] = sum;
+    }
+}
+break;    
+\end{lstlisting}
+同样写了一下验证结果的模块：
+\begin{lstlisting}[language=c]
+int iserr=0;
+for (int i = 0; i < N*N; i++)
+{
+    if (local_C[i] == C[i])
+    {
+        continue;
+    }
+    else
+    {
+        iserr = 1;
+        printf("wrong!\n");
+        break;
+    }
+}
+if(!iserr){
+    printf("right!\n");
+}
+\end{lstlisting}
+验证了很多组数据，结果都是true。
+\section{实验结果}
+\begin{table}[H]
+    \centering
+    \caption{默认调度（时间单位：秒）}
+    \label{表1}
+    \begin{tabular}{|c|lllll|}
+    \hline
+    \multirow{2}{*}{线程数} & \multicolumn{5}{c|}{矩阵规模} \\ \cline{2-6} 
+    & \multicolumn{1}{l|}{128} & \multicolumn{1}{l|}{256} & \multicolumn{1}{l|}{512} & \multicolumn{1}{l|}{1024} & 2048 \\ \hline
+    1  & \multicolumn{1}{l|}{0.0030} & \multicolumn{1}{l|}{0.0505} & \multicolumn{1}{l|}{0.4275} & \multicolumn{1}{l|}{23.6886} & 190.1001 \\ \hline
+    2  & \multicolumn{1}{l|}{0.0016} & \multicolumn{1}{l|}{0.0222} & \multicolumn{1}{l|}{0.2095} & \multicolumn{1}{l|}{11.8194} & 99.1248 \\ \hline
+    4  & \multicolumn{1}{l|}{0.0009} & \multicolumn{1}{l|}{0.0125} & \multicolumn{1}{l|}{0.0870} & \multicolumn{1}{l|}{6.2486} & 54.3281 \\ \hline
+    8  & \multicolumn{1}{l|}{0.0011} & \multicolumn{1}{l|}{0.0149} & \multicolumn{1}{l|}{0.1715} & \multicolumn{1}{l|}{6.2011} & 52.4640 \\ \hline
+    16 & \multicolumn{1}{l|}{0.0012} & \multicolumn{1}{l|}{0.0124} & \multicolumn{1}{l|}{0.1965} & \multicolumn{1}{l|}{7.6892} & 67.4919 \\ \hline
+    \end{tabular}
+    \end{table}
+    \begin{table}[H]
+        \centering
+        \caption{默认调度加速比（基准：单线程）}
+        \label{表1-加速比}
+        \begin{tabular}{|c|lllll|}
+        \hline
+        \multirow{2}{*}{线程数} & \multicolumn{5}{c|}{矩阵规模} \\ \cline{2-6} 
+         & \multicolumn{1}{l|}{128} & \multicolumn{1}{l|}{256} & \multicolumn{1}{l|}{512} & \multicolumn{1}{l|}{1024} & 2048 \\ \hline
+        1  & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & 1.0000 \\ \hline
+        2  & \multicolumn{1}{l|}{1.8750} & \multicolumn{1}{l|}{2.2748} & \multicolumn{1}{l|}{2.0406} & \multicolumn{1}{l|}{2.0044} & 1.9183 \\ \hline
+        4  & \multicolumn{1}{l|}{3.3333} & \multicolumn{1}{l|}{4.0400} & \multicolumn{1}{l|}{4.9138} & \multicolumn{1}{l|}{3.7913} & 3.4988 \\ \hline
+        8  & \multicolumn{1}{l|}{2.7273} & \multicolumn{1}{l|}{3.3893} & \multicolumn{1}{l|}{2.4927} & \multicolumn{1}{l|}{3.8198} & 3.6233 \\ \hline
+        16 & \multicolumn{1}{l|}{2.5000} & \multicolumn{1}{l|}{4.0726} & \multicolumn{1}{l|}{2.1756} & \multicolumn{1}{l|}{3.0808} & 2.8168 \\ \hline
+        \end{tabular}
+        \end{table}
+\begin{table}[H]
+\centering
+\caption{静态调度}
+\label{表2}
+\begin{tabular}{|c|lllll|}
+\hline
+\multirow{2}{*}{线程数} & \multicolumn{5}{c|}{矩阵规模}                                                                        \\ \cline{2-6} 
+ & \multicolumn{1}{l|}{128} & \multicolumn{1}{l|}{256} & \multicolumn{1}{l|}{512} & \multicolumn{1}{l|}{1024} & 2048 \\ \hline
+1                    & \multicolumn{1}{l|}{0.0034} & \multicolumn{1}{l|}{0.0498} & \multicolumn{1}{l|}{0.4040} & \multicolumn{1}{l|}{24.9018} &192.3365  \\ \hline
+2                    & \multicolumn{1}{l|}{0.0018} & \multicolumn{1}{l|}{0.0204} & \multicolumn{1}{l|}{0.1821} & \multicolumn{1}{l|}{12.1277} &100.5978  \\ \hline
+4                    & \multicolumn{1}{l|}{0.0011} & \multicolumn{1}{l|}{0.0118} & \multicolumn{1}{l|}{0.0944} & \multicolumn{1}{l|}{6.1797} &51.6758  \\ \hline
+8                   & \multicolumn{1}{l|}{0.0011} & \multicolumn{1}{l|}{0.0080} & \multicolumn{1}{l|}{0.1400} & \multicolumn{1}{l|}{6.3267} & 52.2564 \\ \hline
+16                   & \multicolumn{1}{l|}{0.0010} & \multicolumn{1}{l|}{0.0128} & \multicolumn{1}{l|}{0.2032} & \multicolumn{1}{l|}{8.3740} &69.5890  \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+    \centering
+    \caption{静态调度加速比（基准：单线程）}
+    \label{表2-加速比-修正}
+    \begin{tabular}{|c|lllll|}
+    \hline
+    \multirow{2}{*}{线程数} & \multicolumn{5}{c|}{矩阵规模} \\ \cline{2-6} 
+     & \multicolumn{1}{l|}{128} & \multicolumn{1}{l|}{256} & \multicolumn{1}{l|}{512} & \multicolumn{1}{l|}{1024} & 2048 \\ \hline
+    1  & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & 1.0000 \\ \hline
+    2  & \multicolumn{1}{l|}{1.8889} & \multicolumn{1}{l|}{2.4412} & \multicolumn{1}{l|}{2.2186} & \multicolumn{1}{l|}{2.0539} & 1.9119 \\ \hline
+    4  & \multicolumn{1}{l|}{3.0909} & \multicolumn{1}{l|}{4.2203} & \multicolumn{1}{l|}{4.2797} & \multicolumn{1}{l|}{4.0300} & 3.7211 \\ \hline
+    8  & \multicolumn{1}{l|}{3.0909} & \multicolumn{1}{l|}{6.2250} & \multicolumn{1}{l|}{2.8857} & \multicolumn{1}{l|}{3.9363} & 3.6813 \\ \hline
+    16 & \multicolumn{1}{l|}{3.4000} & \multicolumn{1}{l|}{3.8906} & \multicolumn{1}{l|}{1.9882} & \multicolumn{1}{l|}{2.9739} & 2.7633 \\ \hline
+    \end{tabular}
+    \end{table}
+\begin{table}[H]
+\centering
+\caption{动态调度}
+\label{表3}
+\begin{tabular}{|c|lllll|}
+\hline
+\multirow{2}{*}{线程数} & \multicolumn{5}{c|}{矩阵规模}                                                                        \\ \cline{2-6} 
+ & \multicolumn{1}{l|}{128} & \multicolumn{1}{l|}{256} & \multicolumn{1}{l|}{512} & \multicolumn{1}{l|}{1024} & 2048 \\ \hline
+1                    & \multicolumn{1}{l|}{0.0051} & \multicolumn{1}{l|}{0.0524} & \multicolumn{1}{l|}{0.4221} & \multicolumn{1}{l|}{28.6079} &201.0495  \\ \hline
+2                    & \multicolumn{1}{l|}{0.0017} & \multicolumn{1}{l|}{0.0270} & \multicolumn{1}{l|}{0.2100} & \multicolumn{1}{l|}{12.0520 } &95.7423  \\ \hline
+4                    & \multicolumn{1}{l|}{0.0012} & \multicolumn{1}{l|}{0.0114} & \multicolumn{1}{l|}{0.0886} & \multicolumn{1}{l|}{6.1280} &50.7980  \\ \hline
+8                    & \multicolumn{1}{l|}{0.0008} & \multicolumn{1}{l|}{0.0079} & \multicolumn{1}{l|}{0.1002} & \multicolumn{1}{l|}{6.2692} &54.8217  \\ \hline
+16                   & \multicolumn{1}{l|}{0.0011} & \multicolumn{1}{l|}{0.0156 } & \multicolumn{1}{l|}{0.1106} & \multicolumn{1}{l|}{8.4593} &69.4817  \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+    \centering
+    \caption{动态调度加速比（基准：单线程）}
+    \label{表4}
+    \begin{tabular}{|c|lllll|}
+    \hline
+    \multirow{2}{*}{线程数} & \multicolumn{5}{c|}{矩阵规模} \\ \cline{2-6} 
+     & \multicolumn{1}{l|}{128} & \multicolumn{1}{l|}{256} & \multicolumn{1}{l|}{512} & \multicolumn{1}{l|}{1024} & 2048 \\ \hline
+    1  & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & 1.0000 \\ \hline
+    2  & \multicolumn{1}{l|}{3.0000} & \multicolumn{1}{l|}{1.9407} & \multicolumn{1}{l|}{2.0100} & \multicolumn{1}{l|}{2.3736} & 2.0998 \\ \hline
+    4  & \multicolumn{1}{l|}{4.2500} & \multicolumn{1}{l|}{4.5965} & \multicolumn{1}{l|}{4.7641} & \multicolumn{1}{l|}{4.6685} & 3.9579 \\ \hline
+    8  & \multicolumn{1}{l|}{6.3750} & \multicolumn{1}{l|}{6.6329} & \multicolumn{1}{l|}{4.2126} & \multicolumn{1}{l|}{4.5633} & 3.6666 \\ \hline
+    16 & \multicolumn{1}{l|}{4.6364} & \multicolumn{1}{l|}{3.3589} & \multicolumn{1}{l|}{3.8165} & \multicolumn{1}{l|}{3.3818} & 2.8930 \\ \hline
+    \end{tabular}
+    \end{table}
+\begin{table}[H]
+    \centering
+    \caption{同样环境下的Pthreads表现}
+    \label{表4}
+    \begin{tabular}{|c|lllll|}
+    \hline
+    \multirow{2}{*}{线程数} & \multicolumn{5}{c|}{矩阵规模}                                                                        \\ \cline{2-6} 
+        & \multicolumn{1}{l|}{128} & \multicolumn{1}{l|}{256} & \multicolumn{1}{l|}{512} & \multicolumn{1}{l|}{1024} & 2048 \\ \hline
+    1                    & \multicolumn{1}{l|}{0.0035} & \multicolumn{1}{l|}{0.0505} & \multicolumn{1}{l|}{0.4295} & \multicolumn{1}{l|}{29.1818} & 194.5260 \\ \hline
+    2                    & \multicolumn{1}{l|}{0.0017} & \multicolumn{1}{l|}{0.0228} & \multicolumn{1}{l|}{0.1849} & \multicolumn{1}{l|}{12.0011} & 99.3836 \\ \hline
+    4                    & \multicolumn{1}{l|}{0.0011} & \multicolumn{1}{l|}{0.0157} & \multicolumn{1}{l|}{0.0950} & \multicolumn{1}{l|}{6.2068} & 51.7878 \\ \hline
+    8                    & \multicolumn{1}{l|}{0.0011} & \multicolumn{1}{l|}{0.0084} & \multicolumn{1}{l|}{0.1460} & \multicolumn{1}{l|}{6.2817} & 52.7319 \\ \hline
+    16                   & \multicolumn{1}{l|}{0.0015} & \multicolumn{1}{l|}{0.0098} & \multicolumn{1}{l|}{0.2315} & \multicolumn{1}{l|}{8.1932} & 67.8994 \\ \hline
+    \end{tabular}
+    \end{table}
+    \begin{table}[H]
+        \centering
+        \caption{Pthreads加速比（基准：单线程）}
+        \label{表5}
+        \begin{tabular}{|c|lllll|}
+        \hline
+        \multirow{2}{*}{线程数} & \multicolumn{5}{c|}{矩阵规模} \\ \cline{2-6} 
+         & \multicolumn{1}{l|}{128} & \multicolumn{1}{l|}{256} & \multicolumn{1}{l|}{512} & \multicolumn{1}{l|}{1024} & 2048 \\ \hline
+        1  & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & \multicolumn{1}{l|}{1.0000} & 1.0000 \\ \hline
+        2  & \multicolumn{1}{l|}{2.0588} & \multicolumn{1}{l|}{2.2149} & \multicolumn{1}{l|}{2.3234} & \multicolumn{1}{l|}{2.4316} & 1.9573 \\ \hline
+        4  & \multicolumn{1}{l|}{3.1818} & \multicolumn{1}{l|}{3.2166} & \multicolumn{1}{l|}{4.5211} & \multicolumn{1}{l|}{4.7019} & 3.7562 \\ \hline
+        8  & \multicolumn{1}{l|}{3.1818} & \multicolumn{1}{l|}{6.0119} & \multicolumn{1}{l|}{2.9417} & \multicolumn{1}{l|}{4.6456} & 3.6891 \\ \hline
+        16 & \multicolumn{1}{l|}{2.3333} & \multicolumn{1}{l|}{5.1530} & \multicolumn{1}{l|}{1.8553} & \multicolumn{1}{l|}{3.5619} & 2.8648 \\ \hline
+        \end{tabular}
+        \end{table}
+\section{实验分析}
+\subsection{程序并行性能分析}
+\begin{itemize}
+    \item 首先是程序的拓展性，我们可以看到，在线程数$\le$物理核数且矩阵规模$\ge$512时，线程数加倍，时间是几乎
+    会缩短一半的。至于在规模小的时候这个特性不明显，我觉得是执行openmp指令的准备工作和收尾工作导致的，比如在计算前需要创建线程等，这些都是需要消耗时间的，当计算时间过短的时候，
+    这部分消耗的时间就会作为主要部分。至于在线程数>物理核数之后，每个线程会轮流上物理核运行，增加了调度成本，所以时间消耗会变多。
+    \item 其次是默认调度，静态调度和动态调度的性能差异。默认调度策略其实就是静态调度，所以理论上二者不应该有明显差异，实验结果也是符合预期的。
+    由于本次矩阵乘法实验的规模都是线程数的整数倍，所以在划分任务的时候并不存在负载不均衡的情况，所以默认调度，静态调度和动态调度的差异不会很大，实验结果也是符合预期的。
+\end{itemize}
+\subsection{Pthreads与Openmp性能对比}
+上次做的Pthreads的加速比并不理想，大概率是实验环境是我自己的电脑+WSL2环境导致的。
+因为这次我在超算习堂上再次运行我的代码，得到了表4，它的加速比是符合我的预期的。\\
+然而我们可以看到二者并没有太多差别，这是因为我的Pthreads程序是对第一个for循环进行切分，而在openmp中
+，我也是对第一个for循环使用了$\#program$语句，二者没有本质上的区别，区别只在于实现方式的不同，但是
+实现方式的不同并不影响整个计算矩阵乘法模块的性能，所以二者差异不大。
+\end{document}

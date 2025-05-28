@@ -1,0 +1,95 @@
+\documentclass{article}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
+\begin{document}
+
+\title{动态链接库(.so)的生成与调用指南}
+\author{}
+\date{}
+\maketitle
+
+\section{生成动态链接库}
+\subsection{Makefile关键规则}
+\begin{lstlisting}[language=make]
+# 生成动态库
+$(LIBRARY): parallel_for.o
+    $(CC) -shared -o $@ $^
+\end{lstlisting}
+
+\begin{itemize}
+    \item \texttt{-shared}：指定生成共享库
+    \item \texttt{-o \$@}：输出文件名为目标名（如\texttt{libparallel\_for.so}）
+    \item \texttt{\$^}：自动引用所有依赖对象文件
+\end{itemize}
+
+\section{主程序链接动态库}
+\subsection{Makefile链接规则}
+\begin{lstlisting}[language=make]
+$(TARGET): main.o
+    $(CC) -o $@ $< -L. -lparallel_for -fopenmp -Wl,-rpath=.
+\end{lstlisting}
+
+\begin{tabular}{|l|l|}
+\hline
+\texttt{-L.} & 指定库搜索路径为当前目录 \\
+\hline
+\texttt{-lparallel\_for} & 链接\texttt{libparallel\_for.so}（省略前缀/后缀） \\
+\hline
+\texttt{-Wl,-rpath=.} & 设置运行时库搜索路径 \\
+\hline
+\texttt{-fopenmp} & 启用OpenMP支持 \\
+\hline
+\end{tabular}
+
+\section{调用流程}
+\subsection{C程序示例}
+\begin{lstlisting}[language=C]
+// main.c
+extern void parallel_for(int start, int end, int step, void (*func)(int));
+
+int main() {
+    parallel_for(0, 100, 1, [](int i) {
+        printf("%d\n", i);
+    });
+    return 0;
+}
+\end{lstlisting}
+
+\subsection{编译运行步骤}
+\begin{enumerate}
+    \item 生成库和可执行文件：
+    \begin{lstlisting}[language=bash]
+    make
+    \end{lstlisting}
+    
+    \item 检查依赖关系：
+    \begin{lstlisting}[language=bash]
+    ldd ./main
+    \end{lstlisting}
+    
+    \item 运行程序：
+    \begin{lstlisting}[language=bash]
+    ./main
+    \end{lstlisting}
+\end{enumerate}
+
+\section{注意事项}
+\begin{itemize}
+    \item 确保导出的函数未被\texttt{static}修饰
+    \item 保持头文件声明与实现一致
+    \item 推荐命名规范：\texttt{lib<name>.so}
+    \item 开发调试建议使用相对路径（\texttt{-Wl,-rpath=.}）
+\end{itemize}
+
+\end{document}

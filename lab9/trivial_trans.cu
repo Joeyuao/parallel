@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <cuda_runtime.h>
+#include <stdlib.h>
+
+__global__ void trans(int* out, int* in, int n) {
+    int bx = blockDim.x * blockIdx.x;
+    int by = blockDim.y * blockIdx.y;
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+    out[(bx+tx)*n + (by+ty)] = in[(by+ty)*n + (bx+tx)];
+}
+
+void initializeMatrix(int* matrix, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            matrix[i*n + j] = i * n + j;  // Simple initialization pattern
+        }
+    }
+}
+
+void printMatrix(int* matrix, int n, int size) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%3d ", matrix[i*size + j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    const int n = 32 * 16;  // blockDim.x * BlockDim.x = 32 * 16 = 512
+    size_t size = n * n * sizeof(int);
+    
+    // Allocate and initialize host memory
+    int* h_in = (int*)malloc(size);
+    int* h_out = (int*)malloc(size);
+    initializeMatrix(h_in, n);
+    
+    // Allocate device memory
+    int *d_in, *d_out;
+    cudaMalloc(&d_in, size);
+    cudaMalloc(&d_out, size);
+    
+    // Copy data to device
+    cudaMemcpy(d_in, h_in, size, cudaMemcpyHostToDevice);
+    
+    // Launch kernel
+    dim3 ThreadDim(32, 32);
+    dim3 BlockDim(16, 16);
+    trans<<<BlockDim, ThreadDim>>>(d_out, d_in, n);
+    
+    // Copy result back to host
+    cudaMemcpy(h_out, d_out, size, cudaMemcpyDeviceToHost);
+    
+    // Print a small portion for verification
+    printf("Original matrix (top-left 5x5):\n");
+    printMatrix(h_in, 5, n);
+    printf("\nTransposed matrix (top-left 5x5):\n");
+    printMatrix(h_out, 5, n);
+    
+    // Cleanup
+    free(h_in);
+    free(h_out);
+    cudaFree(d_in);
+    cudaFree(d_out);
+    
+    cudaDeviceSynchronize();
+    return 0;
+}

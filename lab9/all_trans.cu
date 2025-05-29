@@ -1,7 +1,8 @@
+// #include <__clang_cuda_builtin_vars.h>
 #include <stdio.h>
 #include <cuda_runtime.h>
 #include <stdlib.h>
-
+#define BDIM 16
 __global__ void trans(int* out, int* in, int n) {
     int bx = blockDim.x * blockIdx.x;
     int by = blockDim.y * blockIdx.y;
@@ -9,7 +10,42 @@ __global__ void trans(int* out, int* in, int n) {
     int ty = threadIdx.y;
     out[(bx+tx)*n + (by+ty)] = in[(by+ty)*n + (bx+tx)];
 }
+__global__ void trans_conflict(int* out, int* in, int n) {
+    __shared__ int smem[BDIM * BDIM];
 
+    int bx = blockDim.x * blockIdx.x;
+    int by = blockDim.y * blockIdx.y;
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+
+    smem[ty*BDIM + tx] = in[(by+ty)*n + tx+bx];
+    __syncthreads();
+    out[(bx+ty)*n + by+tx] = smem[tx*BDIM + ty];
+}
+__global__ void trans_solve_confilct0(int* out, int* in, int n) {
+    __shared__ int smem[BDIM * BDIM];
+
+    int bx = blockDim.x * blockIdx.x;
+    int by = blockDim.y * blockIdx.y;
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+
+    smem[ty*BDIM + tx] = in[(by+ty)*n + tx+bx];
+    __syncthreads();
+    out[(bx+tx)*n + by+ty] = smem[ty*BDIM + tx];
+}
+__global__ void trans_solve_confilct1(int* out, int* in, int n) {
+    __shared__ int smem[BDIM * (BDIM+1)];
+
+    int bx = blockDim.x * blockIdx.x;
+    int by = blockDim.y * blockIdx.y;
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+
+    smem[ty*BDIM + tx] = in[(by+ty)*n + tx+bx];
+    __syncthreads();
+    out[(bx+ty)*n + by+tx] = smem[tx*BDIM + ty];
+}
 void initializeMatrix(int* matrix, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
@@ -45,9 +81,9 @@ int main() {
     cudaMemcpy(d_in, h_in, size, cudaMemcpyHostToDevice);
     
     // Launch kernel
-    dim3 ThreadDim(32, 32);
-    dim3 BlockDim(16, 16);
-    trans<<<BlockDim, ThreadDim>>>(d_out, d_in, n);
+    dim3 ThreadDim(BDIM, BDIM);
+    dim3 BlockDim(32, 32);
+    trans_solve_confilct1<<<BlockDim, ThreadDim>>>(d_out, d_in, n);
     
     // Copy result back to host
     cudaMemcpy(h_out, d_out, size, cudaMemcpyDeviceToHost);

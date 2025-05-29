@@ -1,0 +1,20 @@
+# 忽略整个 data 文件夹
+/实验8报告模板/
+.bk
+.vscode
+# 忽略所有临时文件（如LaTeX生成的辅助文件）
+*.aux
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.xdv
+# *.bib
+# *.cls
+# 忽略压缩包和数据集
+*.zip
+*.rar
+*.png
+# 忽略特定子目录下的文件（示例）
+/figures/*.tmp

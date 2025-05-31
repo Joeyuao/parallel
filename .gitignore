@@ -10,6 +10,7 @@
 *.fdb_latexmk
 *.synctex.gz
 *.xdv
+# *[!.]
 # *.bib
 # *.cls
 # 忽略压缩包和数据集

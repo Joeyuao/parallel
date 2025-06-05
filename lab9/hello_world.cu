@@ -11,10 +11,10 @@ __global__ void hello_world_kernel() {
 
 int main() {
     // Threads per block in each dimension
-    dim3 threadsPerBlock(4, 4);  // 16x16 = 256 threads per block
+    dim3 threadsPerBlock(16, 16);  // 16x16 = 256 threads per block
     
     // Number of blocks in each dimension
-    dim3 blocksInGrid(4);       // 4x4 = 16 blocks
+    dim3 blocksInGrid(16);       // 4x4 = 16 blocks
     
     // Launch the 2D kernel
     hello_world_kernel<<<blocksInGrid, threadsPerBlock>>>();

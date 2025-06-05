@@ -2,16 +2,29 @@
 \documentclass{SYSUReport}
 \usepackage{tabularx} % 在导言区添加此行
 \usepackage{float}
+\usepackage{xcolor} % 已加载，无需重复
+\usepackage{graphicx}
+\usepackage{hyperref}
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{orange},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
 % 根据个人情况修改
 \headl{}
 \headc{}
 \headr{并行程序设计与算法实验}
 \lessonTitle{并行程序设计与算法实验}
 \reportTitle{Lab9-CUDA矩阵转置}
-\stuname{xxx}
-\stuid{xxx}
+\stuname{李源卿}
+\stuid{22336128}
 \inst{计算机学院}
-\major{xxx}
+\major{计算机科学与技术}
 \date{2025年5月21日}
 
 \begin{document}
@@ -69,53 +82,215 @@
 \section{实验结果与分析}
 \subsection{CUDA Hello World 并行输出}
 \subsubsection{实验现象}
-描述实验观察到的现象，例如线程输出的顺序等。可以粘贴部分关键的运行截图或输出文本。
+描述实验观察到的现象，例如线程输出的顺序等。可以粘贴部分关键的运行截图或输出文本。\\
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/image0.png}
+    \caption{HelloWorld 程序输出}
+    \label{fig:HelloWorld}
+\end{figure}
+\textbf{关键代码}
+\begin{lstlisting}[language=c]
+__global__ void hello_world_kernel() {
+    int x = threadIdx.x + blockIdx.x * blockDim.x;
+    int y = threadIdx.y + blockIdx.y * blockDim.y;
+    printf("Hello World from thread (%d, %d) in Block (%d)\n", threadIdx.x, threadIdx.y, blockIdx.x);
+}
+    ...
+dim3 threadsPerBlock(16, 16);  
+dim3 blocksInGrid(16);      
+\end{lstlisting}
+我们可以注重分析block编号为1的线程块：
 \begin{itemize}
-    \item 回答：
+    \item 该block中线程输出按y坐标分组出现：先是y=10的所有x(0-15)，然后是y=11的所有x(0-15)
+    \item 每个y组内线程按x坐标顺序输出（从0到15）
+    \item 与block 14的线程输出交错出现
 \end{itemize}
 \subsubsection{结果分析}
 线程输出顺序是否有规律？为什么？结合CUDA线程调度机制进行解释。
 \begin{itemize}
-    \item 回答：
+    \item \textbf{Warp组织线程}： 我们可以看到程序调用了y坐标为10和11的所有线程，总共32个，符合Warp的组织线程的数量。
+    \\同时，我们发现程序调用了y坐标为10和11的所有线程（x编号为0-15），说明warp组织线程时是从x的方向将线程展平的。
+
+    \item \textbf{非严格顺序调度}：虽然y=10和y=11的线程按顺序输出，但整体上block 1和block 14的线程输出交错出现，说明：
+    \begin{itemize}
+        \item GPU以warp为单位进行调度
+        \item 执行顺序受硬件调度器控制，不保证严格的线性顺序
+    \end{itemize}
+    \item \textbf{SIMT执行特性}：同一warp内的线程执行相同指令（printf），但输出顺序可能受线程索引影响，体现了单指令多线程的执行特点。
 \end{itemize}
 \subsection{CUDA 矩阵转置及优化}
+\subsubsection{正确性分析}
+我选择输出前5行5列来验证正确性。\\
+
+\begin{lstlisting}[language=c]
+    ...
+
+printMatrix(h_in, 5, n);
+
+printMatrix(h_out, 5, n);//param：输出的矩阵、输出前几行几列、矩阵大小
+    ...    
+\end{lstlisting}
+结果如下：
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/image1.png}
+    \caption{trans 程序输出}
+    \label{fig:trans}
+\end{figure}
 \subsubsection{不同实现方法的性能对比}
-1. 展示不同矩阵转置实现（仅全局内存、使用共享内存、优化共享内存访问）在不同矩阵规模 (N) 和不同线程块大小下的运行时间。可以根据你的实验设置更改表格的矩阵规模、线程块大小。
+优化版本1是我自己想的，主要是更改访问顺序来解决存储体冲突。下面是我的思路：\\
+存储体冲突的原因在于，一个存储体能存储32个矩阵元素，那么，如果按照图3中的箭头去依次分配元素给thread，就会造成一个warp中的16个线程访问同一个存储体，而另外16个线程访问
+另外一个存储体，会产生冲突。\\
+我们可以分析一下矩阵元素在存储体中的排布：(0,0)存储在bank0...(0,15)存储在bank15，(1,0)存储在bank16...(1,15)存储在bank31...（以此类推）。\\
+刚才的问题在于，(0,0)和(2,0)在同一个存储体，分别被thread0和thread2同时访问。那么我们不妨改变一下访问的映射关系，把每一行的元素一个个分给thread们，也就是让thread0访问(0,0)(bank0)，让thread1访问(1,0)(bank1)......我觉得这样就不会有存储体冲突了\\
+所以有下面的代码：\\
+\begin{lstlisting}[language=c]
+int row = by + ty;
+int col = bx + tx;
+if (row < n && col < n) {
+    smem[ty*BDIM + tx] = in[row * n + col];
+}
+__syncthreads();
+if (row < n && col < n) {
+    out[col * n + row] = smem[ty*BDIM + tx];
+}    
+\end{lstlisting}
+优化版本2就是按照老师讲的思路：分配共享内存的时候多加一列，打乱矩阵元素在存储体中的排列。\\
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/image2.png}
+    \caption{冲突原因}
+    \label{fig:trans}
+\end{figure}
+下面我将展示不同矩阵转置实现（仅全局内存、使用共享内存、优化共享内存访问）在不同矩阵规模 (N) 和不同线程块大小下的运行时间。可以根据你的实验设置更改表格的矩阵规模、线程块大小。
 \begin{table}[h!]
 \centering
 \caption{矩阵转置性能对比 (时间单位: ms)}
-\begin{tabular}{|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
-矩阵规模 (N) & 线程块大小 & 全局内存版本 & 共享内存版本 & 优化共享内存版本 \\
+矩阵规模 (N) & 线程块大小 & 全局内存版本 & 共享内存版本 & 优化版本1 & 优化版本2 \\
 \hline
-\multirow{3}{*}{512} & 8$\times$8 & & & \\
-\cline{2-5} % Draws a line from the 2nd to 5th column
-& 16$\times$16 & & & \\
-\cline{2-5}
-& 32$\times$32 & & & \\
+\multirow{3}{*}{512} & 8$\times$8 &0.009873 &0.011587 &0.010315 &0.010779 \\
+\cline{2-6} % 从第2列到第6列的线
+& 16$\times$16 &0.011199 &0.010640 &0.010724 &0.010875 \\
+\cline{2-6}
+& 32$\times$32 &0.012310 &0.012183 &0.012963 &0.010320 \\
 \hline
-\multirow{3}{*}{1024} & 8$\times$8 & & & \\
-\cline{2-5}
-& 16$\times$16 & & & \\
-\cline{2-5}
-& 32$\times$32 & & & \\
+\multirow{3}{*}{1024} & 8$\times$8 &0.010590 &0.010228 &0.010749 & 0.010412\\
+\cline{2-6}
+& 16$\times$16 &0.010595 &0.011088 &0.010934 &0.010467 \\
+\cline{2-6}
+& 32$\times$32 &0.013219 &0.011646&0.012723 &0.010704 \\
 \hline
-\multirow{3}{*}{2048} & 8$\times$8 & & & \\
-\cline{2-5}
-& 16$\times$16 & & & \\
-\cline{2-5}
-& 32$\times$32 & & & \\
+\multirow{3}{*}{2048} & 8$\times$8 &0.009914 &0.010524 &0.010520 &0.010486 \\
+\cline{2-6}
+& 16$\times$16 &0.010818 &0.010747 &0.010572 &0.010557 \\
+\cline{2-6}
+& 32$\times$32 &0.012362 &0.012070 &0.012736 &0.010811 \\
+\hline
+\multirow{3}{*}{16384} & 8$\times$8 &0.013191&0.012427 &0.013074 &0.012300 \\
+\cline{2-6}
+& 16$\times$16 &0.014253 &0.011709 &0.013826 &0.011185 \\
+\cline{2-6}
+& 32$\times$32 &0.016478 &0.013745 &0.017241 &0.010062 \\
 \hline
 \end{tabular}
 \end{table}
-\subsubsection{结果分析}
+
+% \subsubsection{性能结果分析}
+% 1. 根据实验结果，总结线程块大小、矩阵规模对程序性能的影响。哪种配置下性能最优？为什么？
+
+% 回答：
+
+% 2. 讨论任务/数据划分和映射方式对性能的影响。
+
+% 回答：
+\subsubsection{性能结果分析}
 1. 根据实验结果，总结线程块大小、矩阵规模对程序性能的影响。哪种配置下性能最优？为什么？
 
-回答：
+\begin{itemize}
+  \item \textbf{线程块大小对性能的影响}:
+  \begin{itemize}
+    \item 较小线程块（如 $8\times8$）在小规模矩阵（如 $N=512$ 或 $1024$）上表现更好。例如，在 $N=512$ 规模下，全局内存版本时间为 $0.009873$ ms。这是线程块小，分出来的线程块就多，线程块数目应当大于SM数量才能较好发挥GPU性能。
+    \item 随着线程块增大（如 $32\times32$），在小规模矩阵上时间可能增加（如 $N=512$ 规模下全局内存版本时间达 $0.012310$ ms），表明块增大会导致块数目减少，有的SM甚至可能会空闲。
+    \item 较大线程块（如 $32\times32$）在更大规模矩阵（如 $N=16384$）上优势显著，因为能更好地利用 GPU 的 warp 调度和并行资源，减少内核启动开销和块间同步成本。
+  \end{itemize}
+  
+  \item \textbf{矩阵规模对性能的影响}:
+  \begin{itemize}
+    \item 随着矩阵规模增加（从 $N=512$ 到 $16384$），运行时间总体呈上升趋势。例如，全局内存版本在 $N=16384$ 规模下时间高达 $0.016478$ ms。
+    \item 这是由于数据量增大导致全局内存访问同步延迟（由于存储体冲突需要同步线程）增加和并行任务复杂度提升。
+    \item 优化版本（如优化版本 2）能有效缓解此影响，通过共享内存和优化访问模式、解决存储体冲突减轻延迟问题。
+  \end{itemize}
+  
+  \item \textbf{最优配置}: 矩阵规模 $N=16384$、线程块大小 $32\times32$、优化版本 2（时间最低，$0.010062$ ms）。
+  
+  \item \textbf{原因}:
+  \begin{itemize}
+    \item 较大线程块与大矩阵匹配，线程块内的线程数和线程块的数目处于一个合适的大小，既可以充分被SM调用来隐藏延迟，SM内部的活跃线程数也较多。
+    \item 优化版本 2 充分利用共享内存、减少 bank 冲突（通过调整数据访问模式确保合并访问），所以性能上较优。
+  \end{itemize}
+  \item \textbf{一个问题}:我还没有想明白我的方式为什么没有解决问题，得到的性能和没有解决存储体冲突类似甚至更差。
+  \item \textbf{问题解决了}:我的方式解决了存储体冲突，但是顾此失彼，在写入时不是合并写入，导致更多的时间开销。
+\end{itemize}
 
 2. 讨论任务/数据划分和映射方式对性能的影响。
 
-回答：
+\begin{itemize}
+  \item \textbf{任务/数据划分对性能的影响}:
+  \begin{itemize}
+    %\item 线程块大小的划分直接影响资源分配：较小块（如 $8\times8$) 导致更多线程块，增加内核启动开销和全局内存竞争（如 $N=512$ 规模下全局内存版本性能优于共享内存版本）。
+    \item 较大块（如 $32\times32$) 能处理更大数据，减少块数量并提高计算密度（如在 $N=16384$ 规模下，$32\times32$ 线程块优化版本 2 性能最优）。
+    \item 划分应与 GPU 架构特性（如共享内存大小和 warp 调度）精细匹配，才能最大化并行效率和内存带宽。
+  \end{itemize}
+  
+  \item \textbf{映射方式对性能的影响}:
+  \begin{itemize}
+    \item 共享内存版本通常性能优于全局内存版本（如 $N=16384$ 规模、$16\times16$ 块下，共享内存版本时间 $0.011709$ ms vs. 全局内存版本 $0.014253$ ms），因为它减少了高延迟全局内存访问。
+    \item 但不当的映射（如bank 冲突）会劣化性能（我的优化版本1可能是一个不恰当的映射）。
+    \item 优化版本 2 通过改进数据映射（转置时使用共享内存填充以避免 bank 冲突）实现了较好的性能。
+  \end{itemize}
+\end{itemize}
+% \subsection{矩阵转置性能分析}
 
-注：实验报告格式参考本模板，可在此基础上进行修改；实验代码以zip格式另提交；最终提交内容包括实验报告(pdf格式)和实验代码(zip压缩包格式)
+% \subsubsection{线程块大小与矩阵规模的影响}
+% 根据表1的实验数据，我们可以得出以下结论：
+
+% \begin{itemize}
+% \item \textbf{线程块大小影响}：对于小规模矩阵(512-2048)，不同线程块大小对性能影响较小，差异在0.001-0.003ms范围内。但当矩阵规模增大到16384时，32×32线程块配置显示出明显优势，特别是在优化版本2中达到最佳性能(0.010062ms)。
+
+% \item \textbf{矩阵规模影响}：随着矩阵规模增大，全局内存版本的性能下降最为明显(16384规模下比优化版本2慢约63.8\%)，而优化版本2的性能下降幅度最小，显示出更好的可扩展性。
+
+% \item \textbf{最优配置}：在16384矩阵规模下使用32×32线程块的优化版本2表现最佳。这主要归因于：
+% \begin{enumerate}
+% \item 更大的线程块能更好地利用SM(流式多处理器)中的计算资源
+% \item 32×32线程块大小(1024线程)与GPU架构特性匹配良好，能充分利用warp调度机制
+% \item 优化版本2采用了更高效的内存访问模式——合并内存访问，且解决了存储体冲突
+% \end{enumerate}
+% \end{itemize}
+
+% \subsubsection{任务/数据划分和映射方式的影响}
+% 任务和数据划分策略对性能有显著影响：
+
+% \begin{itemize}
+% \item \textbf{全局内存版本}：直接访问全局内存导致较高的延迟，特别是在大规模矩阵时性能下降明显，这验证了全局内存访问的高延迟特性。
+
+% \item \textbf{共享内存版本}：通过使用共享内存作为缓存，减少了全局内存访问次数，在大多数情况下性能优于全局内存版本，特别是在16384规模下16×16线程块配置中比全局内存版本快约17.8%。
+
+% \item \textbf{优化版本}：优化版本2表现最优，可能采用了以下优化策略：
+% \begin{itemize}
+% \item 更精细的数据划分，确保内存访问对齐
+% \item 使用bank conflict-free的共享内存访问模式
+% \item 合理的线程块维度设计，最大化内存访问的合并效果
+% \item 可能使用了寄存器缓存等进一步优化手段
+% \end{itemize}
+
+% \item \textbf{映射方式}：实验结果表明，将矩阵元素映射到线程时，采用更大的线程块(如32×32)在大规模矩阵上更有效，这因为：
+% \begin{itemize}
+% \item 减少了线程块调度开销
+% \item 提高了内存访问的局部性
+% \item 更好地利用了SM内的并行计算资源
+% \end{itemize}
+% \end{itemize}
 \end{document}
